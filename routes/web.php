@@ -18,3 +18,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 Route::get('logout', 'Auth\LoginController@logout');
+
+Route::post('register', 'PreLoginController@toSetupTeam');
