@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
@@ -19,6 +20,14 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css?family=Droid+Sans|Ubuntu|Asap');
+
+    body {
+        font-family:"Ubuntu";
+    }
+    </style>
 </head>
 <body>
     <div id="app">
