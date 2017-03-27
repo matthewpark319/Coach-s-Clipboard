@@ -9,11 +9,11 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <h2>Account Created Successfully</h2>
-                        <h2>{{ $message }}</h2>
+                        <h2>{{ session('message') }}</h2>
                     </div>
 
                     <div class="form-group">
-                        <a href="/">Back to login</a>
+                        <a href="{{ route('login') }}">Back to login</a>
                     </div>
                 </div>
             </div>

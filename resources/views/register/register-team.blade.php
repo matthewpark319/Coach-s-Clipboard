@@ -10,7 +10,7 @@
                     <div class="form-horizontal">
                         {{ csrf_field() }}
 
-                        <a href="/create-team">
+                        <a href="{{ route('create-team') }}">
                             <div class="form-group">
                                 <div class="col-md-6">
                                     <h3>Create a new team</h3>
@@ -18,7 +18,7 @@
                             </div> 
                         </a>   
 
-                        <a href="/join-team">
+                        <a href="{{ route('join-team') }}">
                             <div class="form-group">
                                 <div class="col-md-6">
                                     <h3>Join a team</h3>

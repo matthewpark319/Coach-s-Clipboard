@@ -12,10 +12,10 @@
                        
 
                         <div class="form-group">
-                            <label for="title" class="col-md-4 control-label">Events</label>
+                            <label for="events" class="col-md-4 control-label">Events</label>
 
                             <div class="col-md-6">
-                                <input id="title" type="text" placeholder="ex. Distance, Sprints, Jumps" class="form-control" name="title" required autofocus>
+                                <input id="events" type="text" placeholder="ex. Distance, Sprints, Jumps" class="form-control" name="events" required autofocus>
                             </div>    
                         </div>    
 

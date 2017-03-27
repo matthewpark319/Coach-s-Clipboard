@@ -28,25 +28,35 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
 Route::get('home', 'HomeController@index');
 
-Route::get('logout', 'Auth\LoginController@logout');
+Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 
 // registration routes
 Route::get('register', 'PreLoginController@showRegistrationPage')->name('register');
 
 Route::post('register', 'PreLoginController@toSetupCoachOrAthlete');
 
-Route::get('create-team', 'PreLoginController@showCreateTeam')->name('create-team');
+Route::get('register/create-team', 'PreLoginController@showCreateTeam')->name('create-team');
 
-Route::post('create-team', 'PreLoginController@createTeam');
+Route::post('register/create-team', 'PreLoginController@createTeam');
 
-Route::get('join-team', 'PreLoginController@showJoinTeam')->name('join-team');
+Route::get('register/join-team', 'PreLoginController@showJoinTeam')->name('join-team');
 
-Route::post('join-team', 'PreLoginController@joinTeam');
+Route::post('register/join-team', 'PreLoginController@joinTeam');
 
-Route::get('create-coach', 'PreLoginController@showCreateCoach')->name('create-coach');
+Route::get('register/create-coach', 'PreLoginController@showCreateCoach')->name('create-coach');
 
-Route::post('create-coach', 'PreLoginController@toSetupTeam');
+Route::post('register/create-coach', 'PreLoginController@toSetupTeam');
 
-Route::get('create-athlete', 'PreLoginController@showCreateAthlete')->name('create-athlete');
+Route::get('register/create-athlete', 'PreLoginController@showCreateAthlete')->name('create-athlete');
 
-Route::post('create-athlete', 'PreLoginController@toSetupTeam');
+Route::post('register/create-athlete', 'PreLoginController@toSetupTeam');
+
+Route::get('register/account-successful', 'PreLoginController@showLoginSuccessful')->name('account-successful');
+
+// coach routes
+Route::get('coach/home', 'CoachController@showHome')->name('coach-home');
+
+Route::get('coach/roster', 'CoachController@showRoster')->name('coach-roster');
+
+// athlete routes
+Route::get('athlete/home', 'AthleteController@showHome')->name('athlete-home');

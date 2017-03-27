@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Coach;
+use App\Athlete;
+use App\Team;
+use App\User;
+use App\Announcement;
+use App\ScheduleEvent;
 
 class HomeController extends Controller
 {
@@ -23,6 +30,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+
+        if ($user->coach_or_athlete)
+            return redirect()->route('coach-home');
+        else 
+            return redirect()->route('athlete-home');   
     }
 }

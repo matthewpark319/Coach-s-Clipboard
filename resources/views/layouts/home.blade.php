@@ -1,5 +1,6 @@
 <html>
     <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -9,11 +10,21 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     </head>
 
     <body>
-        <h1>Home Page</h1>
-        <button type="button" onclick="location.href='/logout'">Log Out</button>
+        <div class="header">
+            <h1 class="heading">Coach's Clipboard</h1>
+            <div class="logout-container float-right">
+                <h3 class="logout-header float-bottom">Hello, {{ $user->first_name }}</h3>
+                <div class="vertical-center">
+                    <a href="{{ route('logout') }}">
+                        <button type="button" class="btn btn-primary logout-button">Log Out</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @yield('content')
     </body>
 </html>

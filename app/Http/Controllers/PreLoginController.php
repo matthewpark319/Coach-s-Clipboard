@@ -10,6 +10,10 @@ use App\Team;
 
 class PreLoginController extends Controller
 {
+    public function showLoginSuccessful() {
+        return view('register/account-successful');
+    }
+
     public function toSetupCoachOrAthlete(Request $request) {
         $this->validate($request, [
             'email' => 'email|max:255|unique:users',
@@ -30,15 +34,11 @@ class PreLoginController extends Controller
     }
 
     public function showCreateCoach() {
-        return view('create-coach');
+        return view('register/create-coach');
     }
 
     public function showCreateAthlete() {
-        return view('create-athlete');
-    }
-
-    public function createCoach(Request $request) {
-        $coach = new Coach;
+        return view('register/create-athlete');
     }
 
     public function createTeam(Request $request) {
@@ -66,7 +66,7 @@ class PreLoginController extends Controller
         $coach->save();
 
         $request->session()->flush();
-        return view('account-successful', ['message' => 'Your team ID is: ' . $team->id]);
+        return redirect('register/account-successful')->with('message', 'Your team ID is: ' . $team->id);
     }
     
     public function joinTeam(Request $request) {
@@ -80,37 +80,43 @@ class PreLoginController extends Controller
         $user_data = $request->session()->all();
         $user_id = $this->register($user_data);
 
-        $athlete = new Athlete;
-        $athlete->events = $request->session()->get('athlete-events');
-        $athlete->user_id = $user_id;
-        $athlete->team = $team->id;
+        if ($request->session()->has('athlete-events')) {
+            $athlete = new Athlete;
+            $athlete->events = $request->session()->get('athlete-events');
+            $athlete->user_id = $user_id;
+            $athlete->team = $team->id;
+            $athlete->save();
+        } else {
+            $coach = new Coach;
+            $coach->title = $request->session()->get('coach-title');
+            $coach->user_id = $user_id;
+            $coach->asst_coach_of = $team->id;
+            $coach->save();
+        }
 
         $request->session()->flush();
-        return view('account-successful', ['message' => 'You joined the ' . $team->school . ' ' . $team->name]);
-
+        return redirect('register/account-successful')->with('message', 'You joined the ' . $team->school . ' ' . $team->name);
     }
 
     public function showCreateTeam() {
-        return view('create-team');
+        return view('register/create-team');
     }
 
     public function showJoinTeam() {
-        return view('join-team');
+        return view('register/join-team');
     }
 
     public function showRegistrationPage() {
-        return view('register');
+        return view('register/register');
     }
 
     public function toSetupTeam(Request $request) {
         // 1 = coach, 0 = athlete
         $coach_or_athlete = $request->session()->get('coach_or_athlete');
-
     	if ($coach_or_athlete) {
             $request->session()->put('coach-title', $request->title);
-			return view('register-team');
-        }
-		else {
+			return view('register/register-team');
+        } else {
             $request->session()->put('athlete-events', $request->events);
 			return redirect()->route('join-team');
         }
