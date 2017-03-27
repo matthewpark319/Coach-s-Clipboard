@@ -8,4 +8,5 @@ class Coach extends Model
 {
     //
     protected $table = 'coach';
+
 }

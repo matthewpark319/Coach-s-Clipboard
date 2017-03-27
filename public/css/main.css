@@ -102,7 +102,7 @@ body {
 .team-header {
 	margin:0;
 	position:relative;
-	top:30%;
+	top:35%;
 }
 
 .team-header-container {
@@ -114,4 +114,12 @@ body {
 .roster-container {
 	height:80%;
 	width:100%;
+
+}
+
+.roster-table {
+	position:relative;
+	width:80%;
+	left:10%;
+	background-color:white;
 }
