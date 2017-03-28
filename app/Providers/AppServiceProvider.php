@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('team', $team);
             $view->with('announcements', $announcements);
             $view->with('schedule', $schedule);
+            $view->with('view', $view->name());
         });
     }
 

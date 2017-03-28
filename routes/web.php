@@ -60,5 +60,7 @@ Route::get('coach/roster', 'CoachController@showRoster')->name('coach-roster');
 
 Route::get('coach/view-athlete/{athlete}', 'CoachController@showViewAthlete')->name('coach-view-athlete');
 
+Route::get('coach/schedule', 'CoachController@showSchedule')->name('coach-schedule');
+
 // athlete routes
 Route::get('athlete/home', 'AthleteController@showHome')->name('athlete-home');

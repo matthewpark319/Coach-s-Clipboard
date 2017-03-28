@@ -83,6 +83,7 @@ class PreLoginController extends Controller
         if ($request->session()->has('athlete-events')) {
             $athlete = new Athlete;
             $athlete->events = $request->session()->get('athlete-events');
+            $athlete->level = $request->session()->get('level');
             $athlete->user_id = $user_id;
             $athlete->team = $team->id;
             $athlete->save();
@@ -118,6 +119,7 @@ class PreLoginController extends Controller
 			return view('register/register-team');
         } else {
             $request->session()->put('athlete-events', $request->events);
+            $request->session()->put('level', $request->level);
 			return redirect()->route('join-team');
         }
     }

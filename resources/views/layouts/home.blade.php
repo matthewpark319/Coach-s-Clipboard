@@ -25,8 +25,32 @@
                 </div>
             </div>
         </div>
+
+        <div class="navbar-wrapper">
+            <div class="navbar-container">
+                <ul class="nav nav-tabs">
+                    <li id="home"><a href="{{ route('coach-home') }}">Home</a></li>
+                    <li id="roster"><a href="{{ route('coach-roster') }}">Roster</a></li>
+                    <li id="schedule"><a href="{{ route('coach-schedule') }}">Schedule</a></li>
+                    <li id="results"><a href="#">Results</a></li>
+                    <li id="announcements"><a href="#">Announcements</a></li>
+                    <li id="account-title"><a>Coach Account: {{ $coach->title }}</a></li>
+                </ul>
+            </div>
+            <div class="navbar-filler"></div>
+        </div>
         @yield('content')
 
-        
+        <script>
+            $(document).ready(function(){
+                var view = "{{ $view }}";
+                if (view.localeCompare("coach.home") == 0)
+                    $('#home').attr('class', 'active');
+                else if (view.localeCompare('coach.roster') == 0 || view.localeCompare('coach.view-athlete') == 0)
+                    $('#roster').attr('class', 'active'); 
+                else if (view.localeCompare('coach.schedule') == 0)
+                    $('#schedule').attr('class', 'active');
+            });   
+        </script>
     </body>
 </html>

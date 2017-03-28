@@ -1,25 +1,12 @@
 @extends('layouts.home')
 
 @section('content')
-<div class="navbar-wrapper">
-    <div class="navbar-container">
-        <ul class="nav nav-tabs">
-            <li><a href="{{ route('coach-home') }}">Home</a></li>
-            <li class="active"><a href="{{ route('coach-roster') }}">Roster</a></li>
-            <li><a href="#">Schedule</a></li>
-            <li><a href="#">Results</a></li>
-            <li><a href="#">Announcements</a></li>
-        </ul>
-    </div>
-    <div class="navbar-filler"></div>
-</div>
-
 <div class="main">
-	<div class="team-header-container">
-		<h2 class="team-header">Roster</h2>
+	<div class="top-header-container">
+		<h2 class="top-header">Roster</h2>
 	</div>
 
-	<div class="roster-container">
+	<div class="content-container-lg">
         <table class="table table-bordered table-hover roster-table">
             <col style="width:50%">
             <col style="width:50%">

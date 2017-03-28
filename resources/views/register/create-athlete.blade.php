@@ -10,12 +10,19 @@
                     <form class="form-horizontal" method="post">
                         {{ csrf_field() }}
                        
-
                         <div class="form-group">
                             <label for="events" class="col-md-4 control-label">Events</label>
 
                             <div class="col-md-6">
                                 <input id="events" type="text" placeholder="ex. Distance, Sprints, Jumps" class="form-control" name="events" required autofocus>
+                            </div>    
+                        </div>    
+
+                        <div class="form-group">
+                            <label for="level" class="col-md-4 control-label">Level</label>
+
+                            <div class="col-md-6">
+                                <input id="level" type="text" placeholder="ex. Varsity, JV, Freshman" class="form-control" name="level" required>
                             </div>    
                         </div>    
 

@@ -14,6 +14,10 @@ use App\ScheduleEvent;
 class CoachController extends Controller
 {
     //
+	public function showSchedule() {
+		return view('coach/schedule');
+	}
+
 	public function showHome() {
 		return view('coach/home');
 	}
