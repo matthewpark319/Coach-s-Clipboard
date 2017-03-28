@@ -16,7 +16,7 @@
     <body>
         <div class="header">
             <h1 class="heading">Coach's Clipboard</h1>
-            <div class="logout-container float-right">
+            <div class="header-container">
                 <h3 class="logout-header float-bottom">Hello, {{ $user->first_name }}</h3>
                 <div class="vertical-center">
                     <a href="{{ route('logout') }}">

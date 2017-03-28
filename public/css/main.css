@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Droid+Sans|Ubuntu|Asap');
 
 .header {
+	position:relative;
 	width:100%;
 	height:13%;
 	background-color:#EDEDED;
@@ -53,9 +54,9 @@ body {
 
 .logout-header {
 	margin:0;
-	height:30%;
 	float:left;
-	line-height:95.5px;
+	display:inline-block;
+	line-height: 33.6px;
 }
 
 .logout-button {
@@ -65,20 +66,18 @@ body {
 }
 
 .vertical-center {
-	position:absolute;
-	display:inline;
-	margin-left:50px;
-	/*height:30%;
-	width:30%;*/
-	bottom:35%;
+	position:relative;
+	display:inline-block;
+	margin-left:20px;
 	float:left;
 }
 
-.logout-container {
-	position:relative;
+.header-container {
 	margin-right:50px;
+	padding-top:30px;
 	width:20%;
 	height:100%;
+	float:right;
 }
 
 .main {
@@ -130,4 +129,24 @@ body {
 
 h4.info {
 	margin-left:35px;
+}
+
+#app-layout-header {
+	height: 95.6px;
+	background-color:#EDEDED;
+}
+
+.header-link {
+	font-size:20px;
+}
+
+#login-body {
+	width:100%;
+	height:100%;
+	background-color:#D6E3FF;	
+}
+
+#login-header {
+	margin-top: 30px;
+	margin-bottom:30px;
 }
