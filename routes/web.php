@@ -62,5 +62,34 @@ Route::get('coach/view-athlete/{athlete}', 'CoachController@showViewAthlete')->n
 
 Route::get('coach/schedule', 'CoachController@showSchedule')->name('coach-schedule');
 
+Route::post('coach/schedule', 'CoachController@changeEventCompletion');
+
+Route::get('coach/add-schedule-event', 'CoachController@showAddScheduleEvent')->name('add-schedule-event');
+
+Route::post('coach/add-schedule-event', 'CoachController@addScheduleEvent');
+
+Route::get('coach/announcements', 'CoachController@showAnnouncements')->name('coach-announcements');
+
+Route::get('coach/add-announcement', 'CoachController@showAddAnnouncement')->name('add-announcement');
+
+Route::post('coach/add-announcement', 'CoachController@addAnnouncement');
+
+Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
+
+Route::get('coach/add-results/{meet}', 'CoachController@showAddResults')->name('add-results');
+
+Route::post('coach/add-results/{meet}', 'CoachController@addResults');
+
+
 // athlete routes
 Route::get('athlete/home', 'AthleteController@showHome')->name('athlete-home');
+
+Route::get('athlete/my-profile', 'AthleteController@showMyProfile')->name('my-profile');
+
+Route::get('athlete/roster', 'AthleteController@showRoster')->name('athlete-roster');
+
+Route::get('athlete/schedule', 'AthleteController@showSchedule')->name('athlete-schedule');
+
+Route::get('athlete/results', 'AthleteController@showResults')->name('athlete-results');
+
+Route::get('athlete/announcements', 'AthleteController@showAnnouncements')->name('athlete-announcements');

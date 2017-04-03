@@ -1,4 +1,4 @@
-@extends('layouts.home')
+@extends('layouts.coach-home')
 
 @section('content')
 <div class="main">

@@ -14,19 +14,19 @@ use App\ScheduleEvent;
 class AthleteController extends Controller
 {
     //
+    public function showSchedule() {
+        return view('athlete/schedule');
+    }
+
     public function showHome() {
-    	$user = Auth::user();
-    	
-    	$athlete = Athlete::find($user->id)->first();
-        $team = Team::find($athlete->team)->first();
-        $announcements = Announcement::where('team_id', $team->id);
-        $schedule = ScheduleEvent::where('team_id', $team->id);
-        return view('home-athlete', [
-            'user' => $user, 
-            'athlete' => $athlete, 
-            'team' => $team, 
-            'announcements' => $announcements,
-            'schedule' => $schedule
-        ]);
+    	return view('athlete/home');
+    }
+
+    public function showRoster() {
+        return view('athlete/roster');
+    }
+
+    public function showAnnouncements() {
+        return view('athlete/announcements');
     }
 }

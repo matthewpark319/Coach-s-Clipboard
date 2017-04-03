@@ -18,6 +18,24 @@ class Team extends Model
     }
 
     public function schedule() {
-    	
+    	return DB::select('select *, date_format(date, "%m/%d/%Y") as date_formatted from schedule_event where team_id = ?', [$this->id]);
+    }
+
+    public function scheduleHome() {
+    	return DB::select('select *, date_format(date, "%m/%d/%Y") as date_formatted from schedule_event where team_id = ? and complete = 0 order by date limit 3', [$this->id]);
+    }
+
+    public function announcements() {
+    	return DB::select("select date_format(a.date, '%m/%d/%Y') as date, time_format(time(a.date), '%l:%i %p') as time, a.text, concat(u.first_name, ' ', u.last_name) as coach
+		from announcement a left join team t on a.team_id = t.id
+		left join coach c on c.id = a.coach_id
+		left join users u on u.id = c.user_id");
+    }
+
+    public function announcementsHome() {
+    	return DB::select("select date_format(a.date, '%m/%d/%Y') as date, time_format(time(a.date), '%l:%i %p') as time, a.text, concat(u.first_name, ' ', u.last_name) as coach
+		from announcement a left join team t on a.team_id = t.id
+		left join coach c on c.id = a.coach_id
+		left join users u on u.id = c.user_id order by date desc limit 3");
     }
 }

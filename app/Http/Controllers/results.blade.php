@@ -3,11 +3,11 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Roster</h2>
+		<h2 class="top-header">Results</h2>
 	</div>
 
 	<div class="content-container-lg">
-        <table class="table table-bordered table-hover roster-table">
+        <!-- <table class="table table-bordered table-hover roster-table">
             <col style="width:50%">
             <col style="width:50%">
             <thead>
@@ -23,7 +23,7 @@
                 @endforeach
             </tbody>
         </table>
-        
+         -->
 	</div>
 </div>
 @endsection
