@@ -17,7 +17,29 @@ use App\Performance;
 class CoachController extends Controller
 {
     //
-    public function changeEventCompletion(Request $request) {
+    public function deleteAnnouncement(Announcement $announcement) {
+        $announcement->delete();
+        return view('coach/announcements');
+    }
+
+    public function showViewMeet(ScheduleEvent $meet) {
+        return view('coach/view-meet', ['meet' => $meet]);
+    }
+
+    public function showTeamBests(Request $request) {
+        return view('coach/results', ['event' => $request->event]);
+    }
+
+    public function showResults() {
+        return view('coach/results', ['event' => null]);
+    }
+
+    public function changeEvent(Request $request) {
+        if (isset($request->delete)) {
+            ScheduleEvent::find($request->entry_id)->delete();
+            return view('coach/schedule');
+        }
+
         $schedule_event = ScheduleEvent::find($request->entry_id);
 
         if ($request->complete) {
@@ -64,10 +86,6 @@ class CoachController extends Controller
 
     public function showAddResults(ScheduleEvent $meet) {
         return view('coach/add-results', ['successful' => 0, 'meet' => $meet]);
-    }
-
-    public function showResults() {
-        return view('coach/results');
     }
 
     public function addAnnouncement(Request $request) {

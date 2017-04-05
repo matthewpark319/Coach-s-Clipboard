@@ -25,6 +25,7 @@ class PreLoginController extends Controller
         $request->session()->put('last_name', $request->last_name);
         $request->session()->put('email', $request->email);
         $request->session()->put('coach_or_athlete', $request->coach_or_athlete);
+        $request->session()->put('gender', $request->gender);
         $request->session()->put('password', $request->password); 
 
         if ($request->coach_or_athlete)

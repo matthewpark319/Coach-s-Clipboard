@@ -68,6 +68,7 @@ class Register extends Controller
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'coach_or_athlete' => $data['coach_or_athlete'],
+            'gender' => $data['gender'],
             'password' => bcrypt($data['password']),
         ]);
     }

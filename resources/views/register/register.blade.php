@@ -64,6 +64,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="male" class="col-md-4 control-label">Male</label>
+                            <div class="col-md-2" style="width:10%; padding-top:7px">     
+                                <input id="male" type="radio" name="gender" value="1" checked>
+                            </div>
+
+                            <label for="female" class="col-md-4 control-label" style="width:10%">Female</label>
+                            <div class="col-md-2" style="padding-top:7px">
+                                <input id="female" type="radio" name="gender" value="0">
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                             <label for="password" class="col-md-4 control-label">Password</label>
 

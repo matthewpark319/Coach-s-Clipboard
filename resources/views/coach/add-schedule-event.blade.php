@@ -67,7 +67,7 @@
 					<li>{{ $e }}</li>
 				@endforeach
 			@elseif ($successful)
-				<h4>Results Saved</h4>
+				<h4>Meet Saved</h4>
 			@endif
 			</div>
 		</div>

@@ -62,7 +62,7 @@ Route::get('coach/view-athlete/{athlete}', 'CoachController@showViewAthlete')->n
 
 Route::get('coach/schedule', 'CoachController@showSchedule')->name('coach-schedule');
 
-Route::post('coach/schedule', 'CoachController@changeEventCompletion');
+Route::post('coach/schedule', 'CoachController@changeEvent');
 
 Route::get('coach/add-schedule-event', 'CoachController@showAddScheduleEvent')->name('add-schedule-event');
 
@@ -74,11 +74,19 @@ Route::get('coach/add-announcement', 'CoachController@showAddAnnouncement')->nam
 
 Route::post('coach/add-announcement', 'CoachController@addAnnouncement');
 
+Route::get('coach/delete-announcement/{announcement}', 'CoachController@deleteAnnouncement')->name('delete-announcement');
+
 Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
 
 Route::get('coach/add-results/{meet}', 'CoachController@showAddResults')->name('add-results');
 
 Route::post('coach/add-results/{meet}', 'CoachController@addResults');
+
+Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
+
+Route::post('coach/results', 'CoachController@showTeamBests');
+
+Route::get('coach/view-meet/{meet}', 'CoachController@showViewMeet')->name('coach-view-meet');
 
 
 // athlete routes
