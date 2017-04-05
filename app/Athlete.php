@@ -16,9 +16,10 @@ class Athlete extends Model
     }
 
     public function performances() {
-    	return DB::select("select p.result, p.event, s.name
+    	return DB::select("select p.result, e.name as event, s.name
     		from performance p left join athlete a on p.athlete_id = a.id
     		left join schedule_event s on p.meet_id = s.id
+            left join event e on p.event_id = e.id
     		where p.athlete_id = ?", [$this->id]);
     }
 }

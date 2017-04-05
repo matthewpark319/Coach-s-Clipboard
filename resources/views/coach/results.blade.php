@@ -20,41 +20,44 @@
 					<div class="col-md-2">
 						<select name="event" class="form-control" onchange="document.getElementById('event').submit();">
 							<option value="">-- Select Event --</option>
-			                <option value="100m" class="sprints">100m</option>
-			                <option value="200m" class="sprints">200m</option>
-			                <option value="400m" class="sprints">400m</option>
-			                <option value="800m" class="distance">800m</option>
-			                <option value="1600m" class="distance">1600m</option>
-			                <option value="3200m" class="distance">3200m</option>
-			                <option value="400 Hurdles" class="sprints">400 Hurdles</option>
-			                <option value="110 Hurdles" class="sprints">110 Hurdles</option>
-			                <option value="100 Hurdles" class="sprints">100 Hurdles</option>
-			                <option value="Shotput" class="field">Shotput</option>
-			                <option value="Javelin" class="field">Javelin</option>
-			                <option value="Discus" class="field">Discus</option>
-			                <option value="Long Jump" class="field">Long Jump</option>
-			                <option value="High Jump" class="field">High Jump</option>
-			                <option value="Triple Jump" class="field">Triple Jump</option>
-			                <option value="Pole Vault" class="field">Pole Vault</option>
+
+                            @foreach (\App\ScheduleEvent::getEvents() as $e)
+                                <option id="{{ $e->id }}" value="{{ $e->id }}" class="{{ $e->type }}">{{ $e->name }}</option> 
+                            @endforeach
 						</select>
 					</div>
 				</form>
 			</div>
 			@if (isset($event))
 				<div class="list-container" style="margin-top:30px">
-					<ul class="list-group">
-					@foreach ($team->teamBestsBoys($event) as $p)
-						<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}
-					@endforeach
-					</ul>
+					<h4>Boys</h4>
+					@if (count($team->teamBestsBoys($event)) == 0)
+						<h5>No Results</h5>
+					@else
+						<ul class="list-group">
+						@foreach ($team->teamBestsBoys($event) as $p)
+							<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}
+						@endforeach
+						</ul>
+					@endif
 				</div>
 
 				<div class="list-container" style="margin-top:30px">
-					<ul class="list-group">
-					@foreach ($team->teamBestsGirls($event) as $p)
-						<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}
-					@endforeach
-					</ul>
+					<h4>Girls</h4>
+					@if (count($team->teamBestsGirls($event)) == 0)
+						<h5>No Results</h5>
+					@else
+						<ul class="list-group">
+						@foreach ($team->teamBestsGirls($event) as $p)
+							<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}
+						@endforeach
+						</ul>
+					@endif
+				</div>
+
+			@else 
+				<div class="list-container">
+					<h4>Team leading performances will appear here after event is selected.</h4>
 				</div>
 			@endif
 
@@ -77,6 +80,13 @@
 			
 		</div>
 	</div>
+	<h1>{{ old('event') }}</h1>
 </div>
 
+<script>
+$(document).ready(function(){
+	var selectedId = "#" + "{{ $event }}";
+    $(selectedId).attr("selected", "selected");
+});
+</script>
 @endsection

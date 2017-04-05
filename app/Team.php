@@ -47,7 +47,7 @@ class Team extends Model
         return DB::select("select concat(u.first_name, ' ', u.last_name) as athlete_name, min(p.result) as result
             from performance p left join athlete a on p.athlete_id = a.id
             left join users u on a.user_id = u.id
-            where p.event = ? and p.team_id = ?
+            where p.event_id = ? and p.team_id = ?
             and u.gender = 1
             group by u.id
             order by result", [$event, $this->id]);
@@ -57,7 +57,7 @@ class Team extends Model
         return DB::select("select concat(u.first_name, ' ', u.last_name) as athlete_name, min(p.result) as result
             from performance p left join athlete a on p.athlete_id = a.id
             left join users u on a.user_id = u.id
-            where p.event = ? and p.team_id = ?
+            where p.event_id = ? and p.team_id = ?
             and u.gender = 0
             group by u.id
             order by result", [$event, $this->id]);

@@ -13,6 +13,7 @@ use App\User;
 use App\Announcement;
 use App\ScheduleEvent;
 use App\Performance;
+use App\Event;
 
 class CoachController extends Controller
 {
@@ -72,8 +73,7 @@ class CoachController extends Controller
 
         for ($i = 0; $i < sizeof($request->result); $i++) {
             $performance = new Performance;
-            $performance->event = $request->event;
-            $performance->event_type = $request->event_type;
+            $performance->event_id = $request->event;
             $performance->athlete_id = $request->athlete[$i];
             $performance->result = $request->result[$i];
             $performance->place = $request->place[$i];
