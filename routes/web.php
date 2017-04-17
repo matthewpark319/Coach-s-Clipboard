@@ -98,6 +98,12 @@ Route::get('athlete/roster', 'AthleteController@showRoster')->name('athlete-rost
 
 Route::get('athlete/schedule', 'AthleteController@showSchedule')->name('athlete-schedule');
 
-Route::get('athlete/results', 'AthleteController@showResults')->name('athlete-results');
-
 Route::get('athlete/announcements', 'AthleteController@showAnnouncements')->name('athlete-announcements');
+
+Route::get('athlete/view-athlete/{teammate}', 'AthleteController@showViewAthlete')->name('athlete-view-athlete');
+
+Route::get('athlete/view-meet/{meet}', 'AthleteController@showViewMeet')->name('athlete-view-meet');
+
+Route::post('athlete/results', 'AthleteController@showTeamBests');
+
+Route::get('athlete/results', 'AthleteController@showResults')->name('athlete-results');

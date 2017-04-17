@@ -33,7 +33,7 @@
                     <li id="my_profile"><a href="{{ route('my-profile') }}">My Profile</a></li>
                     <li id="roster"><a href="{{ route('athlete-roster') }}">Roster</a></li>
                     <li id="schedule"><a href="{{ route('athlete-schedule') }}">Schedule</a></li>
-                    <li id="results"><a href="#">Results</a></li>
+                    <li id="results"><a href="{{ route('athlete-results') }}">Results</a></li>
                     <li id="announcements"><a href="{{ route('athlete-announcements') }}">Announcements</a></li>
                     <li id="account-title"><a>Athlete Account: {{ $user->first_name . ' ' . $user->last_name }}</a></li>
                 </ul>
@@ -53,6 +53,8 @@
                     $('#schedule').attr('class', 'active');
                 else if (view.localeCompare('athlete.announcements') == 0 || view.localeCompare('athlete.add-announcement') == 0)
                     $('#announcements').attr('class', 'active');
+                else if (view.localeCompare('athlete.view-meet') == 0 || view.localeCompare('athlete.results') == 0)
+                    $('#results').attr('class', 'active');
             });   
         </script>
     </body>

@@ -1,9 +1,9 @@
-@extends('layouts.coach-home')
+@extends('layouts.athlete-home')
 
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Athlete Profile: {{ $athlete->name() }}</h2>
+		<h2 class="top-header">My Profile</h2>
 	</div>
 
 	<div class="content-container-lg">
@@ -18,10 +18,7 @@
 					@endforeach
 				</ul>
 			</div>
-			<a class="btn btn-default add-button" href="{{ route('coach-roster') }}">Back</a>
 		</div>
-
-
 	</div>
 </div>
 @endsection

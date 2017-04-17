@@ -14,6 +14,26 @@ use App\ScheduleEvent;
 class AthleteController extends Controller
 {
     //
+    public function showTeamBests(Request $request) {
+        return view('athlete/results', ['event' => $request->event]);
+    }
+
+    public function showResults() {
+        return view('athlete/results', ['event' => null]);
+    }
+
+    public function showViewMeet(ScheduleEvent $meet) {
+        return view('athlete/view-meet', ['meet' => $meet]);
+    }
+
+    public function showViewAthlete(Athlete $teammate) {
+        return view('athlete/view-athlete', ['teammate' => $teammate]);
+    }
+
+    public function showMyProfile() {
+        return view('athlete/myprofile');
+    }
+
     public function showSchedule() {
         return view('athlete/schedule');
     }

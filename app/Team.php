@@ -63,7 +63,11 @@ class Team extends Model
             order by result", [$event, $this->id]);
     }
 
-    public function resultsByEvent($event, $gender) {
-
+    // roster without athlete logged in
+    public function teammates($athlete_id) {
+        return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
+            from athlete a left join users u on a.user_id = u.id where a.team = ? 
+            and a.id != ?
+            order by a.events", [$this->id, $athlete_id]);
     }
 }

@@ -1,9 +1,9 @@
-@extends('layouts.coach-home')
+@extends('layouts.athlete-home')
 
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<a class="btn btn-default back-button" href="{{ route('coach-results') }}"> Back</a>
+		<a class="btn btn-default back-button" href="{{ route('athlete-results') }}"> Back</a>
 		<h2 class="top-header">Results: {{ $meet->name }}</h2>
 		
 	</div>
