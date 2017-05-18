@@ -48,7 +48,7 @@
                     $('#home').attr('class', 'active');
                 else if (view.localeCompare('coach.roster') == 0 || view.localeCompare('coach.view-athlete') == 0)
                     $('#roster').attr('class', 'active'); 
-                else if (view.localeCompare('coach.schedule') == 0 || view.localeCompare('coach.add-results') == 0)
+                else if (view.localeCompare('coach.schedule') == 0 || view.localeCompare('coach.add-results-individual') == 0 || view.localeCompare('coach.add-results-relay') == 0)
                     $('#schedule').attr('class', 'active');
                 else if (view.localeCompare('coach.announcements') == 0 || view.localeCompare('coach.add-announcement') == 0)
                     $('#announcements').attr('class', 'active');

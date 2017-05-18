@@ -33,14 +33,16 @@ class Team extends Model
     	return DB::select("select a.id, date_format(a.date, '%m/%d/%Y') as date, time_format(time(a.date), '%l:%i %p') as time, a.text, concat(u.first_name, ' ', u.last_name) as coach
     		from announcement a left join team t on a.team_id = t.id
     		left join coach c on c.id = a.coach_id
-    		left join users u on u.id = c.user_id");
+    		left join users u on u.id = c.user_id
+            where t.id = ?", [$this->id]);
     }
 
     public function announcementsHome() {
     	return DB::select("select date_format(a.date, '%m/%d/%Y') as date, time_format(time(a.date), '%l:%i %p') as time, a.text, concat(u.first_name, ' ', u.last_name) as coach
     		from announcement a left join team t on a.team_id = t.id
     		left join coach c on c.id = a.coach_id
-    		left join users u on u.id = c.user_id order by date desc limit 3");
+    		left join users u on u.id = c.user_id where t.id = ? 
+            order by date desc limit 3", [$this->id]);
     }
 
     public function teamBestsBoys($event) {
@@ -48,6 +50,7 @@ class Team extends Model
             from performance p left join athlete a on p.athlete_id = a.id
             left join users u on a.user_id = u.id
             where p.event_id = ? and p.team_id = ?
+            and p.relay_leg is null
             and u.gender = 1
             group by u.id
             order by result", [$event, $this->id]);
@@ -58,6 +61,7 @@ class Team extends Model
             from performance p left join athlete a on p.athlete_id = a.id
             left join users u on a.user_id = u.id
             where p.event_id = ? and p.team_id = ?
+            and p.relay_leg is null
             and u.gender = 0
             group by u.id
             order by result", [$event, $this->id]);

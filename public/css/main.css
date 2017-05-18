@@ -59,12 +59,6 @@ body {
 	line-height: 33.6px;
 }
 
-.logout-button {
-	/*height:100%;
-	width:100%;*/
-	
-}
-
 .vertical-center {
 	position:relative;
 	display:inline-block;
@@ -184,13 +178,20 @@ h4.info {
 	left:20%;
 }
 
+.form-container-small {
+	position:absolute;
+	width:40%;
+	left:30%;
+	height:100%;
+}
+
 .button-container {
 	float:right;
 	width:30%;
 	height:20%;
 	position:absolute;
 	left:65%;
-	bottom:35%;
+	bottom:15%;
 }
 
 .btn-bottom-right {
@@ -297,4 +298,8 @@ h4.info {
 	position:absolute;
 	bottom:40%;
 	right:0;
+}
+
+.margin-left {
+	margin-left:15px;
 }

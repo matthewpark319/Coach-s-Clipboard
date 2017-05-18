@@ -50,7 +50,7 @@
                                 </div>
                             </td>
                             @if ($entry->complete)
-                                <td><a href="{{ route('add-results', ['meet' => $entry->id]) }}">Add Results</a></td>
+                                <td><a href="{{ route('add-results-individual', ['meet' => $entry->id]) }}">Add Results</a></td>
                                 <td>-</td>
                             @else
                                 <td>Not Complete</td>

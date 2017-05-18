@@ -78,9 +78,13 @@ Route::get('coach/delete-announcement/{announcement}', 'CoachController@deleteAn
 
 Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
 
-Route::get('coach/add-results/{meet}', 'CoachController@showAddResults')->name('add-results');
+Route::get('coach/add-results/individual/{meet}', 'CoachController@showAddResultsIndividual')->name('add-results-individual');
 
-Route::post('coach/add-results/{meet}', 'CoachController@addResults');
+Route::post('coach/add-results/individual/{meet}', 'CoachController@addResultsIndividual');
+
+Route::get('coach/add-results/relay/{meet}', 'CoachController@showAddResultsRelay')->name('add-results-relay');
+
+Route::post('coach/add-results/relay/{meet}', 'CoachController@addResultsRelay');
 
 Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
 

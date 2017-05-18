@@ -14,18 +14,17 @@
 		</div>
 
 		@foreach ($meet->getEvents() as $e)
-			<div class="list-container">
-				<h4>{{ $e->name }}</h4>
-				
-				@if (count($meet->results($e->id, 1)) == 0)
-					<h5>No Results</h5>
-				@endif
-				<ul class="list-group">
-				@foreach ($meet->results($e->id, 1) as $result) 
-					<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
-				@endforeach
-				</ul>
-			</div>
+			@if (count($meet->results($e->id, 1)) > 0)
+				<div class="list-container">
+					<h4>{{ $e->name }}</h4>
+		
+					<ul class="list-group">
+					@foreach ($meet->results($e->id, 1) as $result) 
+						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
+					@endforeach
+					</ul>
+				</div>
+			@endif
 		@endforeach
 	</div>
 
@@ -35,18 +34,17 @@
 		</div>
 
 		@foreach ($meet->getEvents() as $e)
-			<div class="list-container">
-				<h4>{{ $e->name }}</h4>
-				
-				@if (count($meet->results($e->id, 0)) == 0)
-					<h5>No Results</h5>
-				@endif
-				<ul class="list-group">
-				@foreach ($meet->results($e->id, 0) as $result) 
-					<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
-				@endforeach
-				</ul>
-			</div>
+			@if (count($meet->results($e->id, 0)) > 0)
+				<div class="list-container">
+					<h4>{{ $e->name }}</h4>
+					<ul class="list-group">
+					@foreach ($meet->results($e->id, 0) as $result) 
+						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
+					@endforeach
+					</ul>
+				</div>
+			@endif
+			
 		@endforeach
 	</div>
 </div>

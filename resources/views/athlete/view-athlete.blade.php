@@ -13,8 +13,12 @@
 			<h4 class="info">Performances: </h4>
 			<div class="list-container">
 				<ul class="list-group">
-					@foreach ($teammate->performances() as $p)
-						<li class="list-group-item">{{ $p->result . ', ' . $p->event . ' at ' . $p->name}}</li>
+					@foreach ($athlete->performances() as $p)
+						@if ($p->relay_leg == null)
+							<li class="list-group-item">{{ $p->result . ', ' . $p->event . ' at ' . $p->meet . $p->relay_leg}}</li>
+						@else
+							<li class="list-group-item">{{ $p->result . ', ' . $p->event . ', ' . $p->relay_leg . ' leg of ' . $p->relay_name . ' at ' . $p->meet}}
+						@endif
 					@endforeach
 				</ul>
 			</div>

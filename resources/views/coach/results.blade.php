@@ -21,7 +21,7 @@
 						<select name="event" class="form-control" onchange="document.getElementById('event').submit();">
 							<option value="">-- Select Event --</option>
 
-                            @foreach (\App\ScheduleEvent::getEvents() as $e)
+                            @foreach (\App\Event::all() as $e)
                                 <option id="{{ $e->id }}" value="{{ $e->id }}" class="{{ $e->type }}">{{ $e->name }}</option> 
                             @endforeach
 						</select>
@@ -57,7 +57,7 @@
 
 			@else 
 				<div class="list-container">
-					<h4>Team leading performances will appear here after event is selected.</h4>
+					<h4>Team leading performances (excluding relay splits) will appear here after event is selected.</h4>
 				</div>
 			@endif
 

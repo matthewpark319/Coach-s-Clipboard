@@ -8,11 +8,10 @@
 
 	<div class="content-container-lg">
 		<div class="form-container">
-            <form method="post" id="form">
+            <form method="post" id="form" url="{{ $meet->id }}">
                 {{ csrf_field() }}
                 <input name="team_id" type="hidden" value="{{ $team->id }}">
                 <input name="event_type" type="hidden" value="" id="event_type">
-                <input name="meet_id" type="hidden" value="{{ $meet->id }}">
                 <div class="form-inline event">
                     <div class="form-group">
                         <label for="event">Event</label>
@@ -20,10 +19,14 @@
                         <select id="event" class="form-control" name="event" onchange="setEventType()" required>
                             <option value="">-- Select Event --</option>
 
-                            @foreach ($meet->getEvents() as $e)
+                            @foreach (\App\Event::getIndividualEvents() as $e)
                                 <option value="{{ $e->id }}" class="{{ $e->type }}">{{ $e->name }}</option>
                             @endforeach
                         </select>
+
+                        <label for="relay" style="padding-left:15px">Relay</label>
+                        <input id="relay" type="checkbox" name="relay" class="checkbox" onchange="changeToRelays()">
+                        
                     </div>
                     
                 </div>
@@ -107,5 +110,8 @@ function removeEntry(element) {
     $(element).parent('.entry').remove();
 }
 
+function changeToRelays() {
+    window.location.href = "{{ route('add-results-relay', $meet->id) }}";
+}
 </script>
 @endsection
