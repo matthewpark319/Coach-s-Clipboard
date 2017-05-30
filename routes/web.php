@@ -31,83 +31,101 @@ Route::get('home', 'HomeController@index');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 
 // registration routes
-Route::get('register', 'PreLoginController@showRegistrationPage')->name('register');
+Route::group(['prefix' => 'register'], function() {
 
-Route::post('register', 'PreLoginController@toSetupCoachOrAthlete');
+	Route::get('/', 'PreLoginController@showRegistrationPage')->name('register');
 
-Route::get('register/create-team', 'PreLoginController@showCreateTeam')->name('create-team');
+	Route::post('/', 'PreLoginController@toSetupCoachOrAthlete');
 
-Route::post('register/create-team', 'PreLoginController@createTeam');
+	Route::get('create-team', 'PreLoginController@showCreateTeam')->name('create-team');
 
-Route::get('register/join-team', 'PreLoginController@showJoinTeam')->name('join-team');
+	Route::post('create-team', 'PreLoginController@createTeam');
 
-Route::post('register/join-team', 'PreLoginController@joinTeam');
+	Route::get('join-team', 'PreLoginController@showJoinTeam')->name('join-team');
 
-Route::get('register/create-coach', 'PreLoginController@showCreateCoach')->name('create-coach');
+	Route::post('join-team', 'PreLoginController@joinTeam');
 
-Route::post('register/create-coach', 'PreLoginController@toSetupTeam');
+	Route::get('create-coach', 'PreLoginController@showCreateCoach')->name('create-coach');
 
-Route::get('register/create-athlete', 'PreLoginController@showCreateAthlete')->name('create-athlete');
+	Route::post('create-coach', 'PreLoginController@toSetupTeam');
 
-Route::post('register/create-athlete', 'PreLoginController@toSetupTeam');
+	Route::get('create-athlete', 'PreLoginController@showCreateAthlete')->name('create-athlete');
 
-Route::get('register/account-successful', 'PreLoginController@showLoginSuccessful')->name('account-successful');
+	Route::post('create-athlete', 'PreLoginController@toSetupTeam');
+
+	Route::get('account-successful', 'PreLoginController@showLoginSuccessful')->name('account-successful');
+});
 
 // coach routes
-Route::get('coach/home', 'CoachController@showHome')->name('coach-home');
+Route::group(['prefix' => 'coach'], function() {
 
-Route::get('coach/roster', 'CoachController@showRoster')->name('coach-roster');
+	Route::get('home', 'CoachController@showHome')->name('coach-home');
 
-Route::get('coach/view-athlete/{athlete}', 'CoachController@showViewAthlete')->name('coach-view-athlete');
+	Route::get('roster', 'CoachController@showRoster')->name('coach-roster');
 
-Route::get('coach/schedule', 'CoachController@showSchedule')->name('coach-schedule');
+	Route::get('view-athlete/{athlete}', 'CoachController@showViewAthlete')->name('coach-view-athlete');
 
-Route::post('coach/schedule', 'CoachController@changeEvent');
+	Route::get('splits/{performance}', 'CoachController@showSplits')->name('coach-splits');
 
-Route::get('coach/add-schedule-event', 'CoachController@showAddScheduleEvent')->name('add-schedule-event');
+	Route::get('schedule', 'CoachController@showSchedule')->name('coach-schedule');
 
-Route::post('coach/add-schedule-event', 'CoachController@addScheduleEvent');
+	Route::post('schedule', 'CoachController@changeEvent');
 
-Route::get('coach/announcements', 'CoachController@showAnnouncements')->name('coach-announcements');
+	Route::get('add-schedule-event', 'CoachController@showAddScheduleEvent')->name('add-schedule-event');
 
-Route::get('coach/add-announcement', 'CoachController@showAddAnnouncement')->name('add-announcement');
+	Route::post('add-schedule-event', 'CoachController@addScheduleEvent');
 
-Route::post('coach/add-announcement', 'CoachController@addAnnouncement');
+	Route::get('announcements', 'CoachController@showAnnouncements')->name('coach-announcements');
 
-Route::get('coach/delete-announcement/{announcement}', 'CoachController@deleteAnnouncement')->name('delete-announcement');
+	Route::get('add-announcement', 'CoachController@showAddAnnouncement')->name('add-announcement');
 
-Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
+	Route::post('add-announcement', 'CoachController@addAnnouncement');
 
-Route::get('coach/add-results/individual/{meet}', 'CoachController@showAddResultsIndividual')->name('add-results-individual');
+	Route::get('delete-announcement/{announcement}', 'CoachController@deleteAnnouncement')->name('delete-announcement');
 
-Route::post('coach/add-results/individual/{meet}', 'CoachController@addResultsIndividual');
+	Route::get('results', 'CoachController@showResults')->name('coach-results');
 
-Route::get('coach/add-results/relay/{meet}', 'CoachController@showAddResultsRelay')->name('add-results-relay');
+	Route::get('add-results/individual/{meet}', 'CoachController@showAddResultsIndividual')->name('add-results-individual');
 
-Route::post('coach/add-results/relay/{meet}', 'CoachController@addResultsRelay');
+	Route::post('add-results/individual/{meet}', 'CoachController@addResultsIndividual');
 
-Route::get('coach/results', 'CoachController@showResults')->name('coach-results');
+	Route::get('add-results/relay/{meet}/{relay?}', 'CoachController@showAddResultsRelay')->name('add-results-relay');
 
-Route::post('coach/results', 'CoachController@showTeamBests');
+	Route::post('add-results/relay/{meet}', 'CoachController@addResultsRelay');
 
-Route::get('coach/view-meet/{meet}', 'CoachController@showViewMeet')->name('coach-view-meet');
+	Route::get('results', 'CoachController@showResults')->name('coach-results');
 
+	Route::get('results/team-bests/{event}', 'CoachController@showTeamBests')->name('coach-team-bests');
+
+	Route::get('view-meet/{meet}', 'CoachController@showViewMeet')->name('coach-view-meet');
+
+	Route::get('view-meet/{meet}/delete-individual/{performance}', 'CoachController@deleteResultIndividual')->name('delete-individual');
+
+	Route::get('view-meet/{meet}/delete-relay/{relay}', 'CoachController@deleteResultRelay')->name('delete-relay');
+});
 
 // athlete routes
-Route::get('athlete/home', 'AthleteController@showHome')->name('athlete-home');
+Route::group(['prefix' => 'athlete'], function() {
 
-Route::get('athlete/my-profile', 'AthleteController@showMyProfile')->name('my-profile');
+	Route::get('home', 'AthleteController@showHome')->name('athlete-home');
 
-Route::get('athlete/roster', 'AthleteController@showRoster')->name('athlete-roster');
+	Route::get('my-profile', 'AthleteController@showMyProfile')->name('my-profile');
 
-Route::get('athlete/schedule', 'AthleteController@showSchedule')->name('athlete-schedule');
+	Route::get('roster', 'AthleteController@showRoster')->name('athlete-roster');
 
-Route::get('athlete/announcements', 'AthleteController@showAnnouncements')->name('athlete-announcements');
+	Route::get('schedule', 'AthleteController@showSchedule')->name('athlete-schedule');
 
-Route::get('athlete/view-athlete/{teammate}', 'AthleteController@showViewAthlete')->name('athlete-view-athlete');
+	Route::get('announcements', 'AthleteController@showAnnouncements')->name('athlete-announcements');
 
-Route::get('athlete/view-meet/{meet}', 'AthleteController@showViewMeet')->name('athlete-view-meet');
+	Route::get('view-athlete/{teammate}', 'AthleteController@showViewAthlete')->name('athlete-view-athlete');
 
-Route::post('athlete/results', 'AthleteController@showTeamBests');
+	Route::get('view-meet/{meet}', 'AthleteController@showViewMeet')->name('athlete-view-meet');
 
-Route::get('athlete/results', 'AthleteController@showResults')->name('athlete-results');
+	Route::post('results', 'AthleteController@showTeamBests');
+
+	Route::get('results', 'AthleteController@showResults')->name('athlete-results');
+
+	Route::get('results/team-bests/{event}', 'AthleteController@showTeamBests')->name('athlete-team-bests');
+
+	Route::get('splits/{performance}', 'AthleteController@showSplits')->name('athlete-splits');
+});

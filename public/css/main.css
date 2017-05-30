@@ -127,7 +127,7 @@ body {
 	width:80%;
 	height:75%;
 	left:10%;
-	overflow-y:scroll;
+	overflow-y:auto;
 }
 
 #account-title {
@@ -172,10 +172,19 @@ h4.info {
 }
 
 .form-container {
-	position:absolute;
+	position:relative;
+	display:inline-block;
 	width:60%;
 	height:100%;
 	left:20%;
+}
+
+.right-margin {
+	position:relative;
+	float:right;
+	width:20%;
+	height:100%;
+	display:inline-block;
 }
 
 .form-container-small {
@@ -186,12 +195,11 @@ h4.info {
 }
 
 .button-container {
-	float:right;
-	width:30%;
+	float:left;
+	width:70%;
 	height:20%;
-	position:absolute;
-	left:65%;
-	bottom:15%;
+	position:relative;
+	top:80%;
 }
 
 .btn-bottom-right {
@@ -276,6 +284,16 @@ h4.info {
 	position:relative;
 }
 
+.list-container-scroll {
+	display:block;
+	margin-top:20px;
+	width:80%;
+	height:75%;
+	position:relative;
+	left:10%;
+	overflow-y:auto;
+}
+
 .list-container {
 	display:block;
 	margin-top:20px;
@@ -302,4 +320,17 @@ h4.info {
 
 .margin-left {
 	margin-left:15px;
+}
+
+.margin-right {
+	margin-right:15px;
+}
+
+.split-arrow {
+	height:35px;
+	width:35px;
+}
+
+.entry {
+	padding-bottom:15px;	
 }

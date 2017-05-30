@@ -15,19 +15,15 @@ class Event extends Model
     }
 
     public static function getRelayEvents() {
-    	return DB::select("select * from event where open = 0");
+    	return DB::select("select * from event where type = 3");
     }
 
     public static function getRelayLegs($relay_id) {
-    	$leg = null;
-    	if ($relay_id == 17) $leg = parent::find(1);
-		else if ($relay_id == 18) $leg = parent::find(2);
-		else if ($relay_id == 19) $leg = parent::find(3);
-		else if ($relay_id == 20) $leg = parent::find(4);
-		else if ($relay_id == 21) $leg = parent::find(5);
-		else if ($relay_id == 22) return (array(parent::find(24), parent::find(3), parent::find(4), parent::find(6)));
-		else if ($relay_id == 23) return (array(parent::find(3), parent::find(2), parent::find(2), parent::find(4)));
+        $legs = DB::select("select event_first_leg, event_second_leg, event_third_leg, event_fourth_leg from event where id = ?", [$relay_id])[0];
 			
-		return array($leg, $leg, $leg, $leg);
+		return array(parent::find($legs->event_first_leg),
+            parent::find($legs->event_second_leg),
+            parent::find($legs->event_third_leg),
+            parent::find($legs->event_fourth_leg));
     }
 }

@@ -10,12 +10,18 @@ use App\Team;
 use App\User;
 use App\Announcement;
 use App\ScheduleEvent;
+use App\Event;
+use App\Performance;
 
 class AthleteController extends Controller
 {
     //
-    public function showTeamBests(Request $request) {
-        return view('athlete/results', ['event' => $request->event]);
+    public function showSplits(Performance $performance) {
+        return view('athlete/splits', ['performance' => $performance]);
+    }
+
+    public function showTeamBests(Event $event) {
+        return view('athlete/results', ['event' => $event]);
     }
 
     public function showResults() {

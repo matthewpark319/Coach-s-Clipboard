@@ -12,7 +12,7 @@ class ScheduleEvent extends Model
     protected $table = 'schedule_event';
 
     public function resultsIndividual($event, $gender) {
-    	return DB::select("select p.result, concat(u.first_name, ' ', u.last_name) as name 
+    	return DB::select("select p.id, p.result, concat(u.first_name, ' ', u.last_name) as name, p.relay_leg, p.has_splits 
 			from performance p left join athlete a on p.athlete_id = a.id
 			left join users u on a.user_id = u.id
 			where meet_id = ?
@@ -22,7 +22,8 @@ class ScheduleEvent extends Model
     }
 
     public function resultsRelay($event, $gender) {
-    	return DB::select("select p.result, concat(u.first_name, ' ', u.last_name) as name, e.name as distance, p.relay_leg, r.result as total_time from performance p
+    	return DB::select("select p.id as performance_id, r.id as relay_id, p.result, concat(u.first_name, ' ', u.last_name) as name, e.name as distance, 
+    		p.relay_leg, r.result as total_time, p.has_splits from performance p
 			left join relay r on p.id in (r.first_leg, r.second_leg, r.third_leg, r.fourth_leg)
 			left join athlete a on p.athlete_id = a.id
 			left join users u on a.user_id = u.id

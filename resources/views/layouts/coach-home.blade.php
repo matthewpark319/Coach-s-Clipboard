@@ -52,7 +52,7 @@
                     $('#schedule').attr('class', 'active');
                 else if (view.localeCompare('coach.announcements') == 0 || view.localeCompare('coach.add-announcement') == 0)
                     $('#announcements').attr('class', 'active');
-                else if (view.localeCompare('coach.results') == 0 || view.localeCompare('coach.view-meet') == 0)
+                else if (view.localeCompare('coach.results') == 0 || view.localeCompare('coach.view-meet') == 0 || view.localeCompare('coach.splits') == 0)
                     $('#results').attr('class', 'active');
             });   
         </script>

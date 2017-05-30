@@ -13,18 +13,28 @@
 			<h4 class="info">Performances: </h4>
 			<div class="list-container">
 				<ul class="list-group">
-					@foreach ($athlete->performances() as $p)
-						@if ($p->relay_leg == null)
-							<li class="list-group-item">{{ $p->result . ', ' . $p->event . ' at ' . $p->meet . $p->relay_leg}}</li>
-						@else
-							<li class="list-group-item">{{ $p->result . ', ' . $p->event . ', ' . $p->relay_leg . ' leg of ' . $p->relay_name . ' at ' . $p->meet}}
+					@foreach ($teammate->performances() as $p)
+						
+						@if (is_null($p->id)) @break @endif
+						@php $performance = \App\Performance::find($p->id); @endphp
+
+					
+						<li class="list-group-item">{{ $performance->getRaceResult() . ' - ' . $performance->getRaceInfo() }}	
+						
+						@if ($p->has_splits == 1)
+							<a href="{{ route('athlete-splits', ['performance' => $p->id]) }}" class='float-right'>See Splits</a>
 						@endif
+						</li>
 					@endforeach
 				</ul>
 			</div>
-			<a class="btn btn-default add-button" href="{{ route('athlete-roster') }}">Back</a>
 		</div>
 
+		<div class="right-margin">
+	        <div class="button-container">
+	            <a class="btn btn-default add-button" href="{{ route('athlete-roster') }}">Back</a>
+	        </div>
+	    </div>
 
 	</div>
 </div>

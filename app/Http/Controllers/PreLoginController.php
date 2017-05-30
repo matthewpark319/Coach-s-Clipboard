@@ -16,7 +16,7 @@ class PreLoginController extends Controller
 
     public function toSetupCoachOrAthlete(Request $request) {
         $this->validate($request, [
-            'email' => 'email|max:255|unique:users',
+            'email' => 'max:255|unique:users',
             'password' => 'min:6|confirmed',
         ]);
 

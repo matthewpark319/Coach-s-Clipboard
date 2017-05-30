@@ -22,7 +22,12 @@
                             <label for="level" class="col-md-4 control-label">Level</label>
 
                             <div class="col-md-6">
-                                <input id="level" type="text" placeholder="ex. Varsity, JV, Freshman" class="form-control" name="level" required>
+                                <select id="level" class="form-control" name="level" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="Varsity">Varsity</option>
+                                    <option value="JV">JV</option>
+                                    <option value="Freshman">Freshman</option>
+                                </select>
                             </div>    
                         </div>    
 

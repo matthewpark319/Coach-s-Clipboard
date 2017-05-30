@@ -14,7 +14,7 @@ class Team extends Model
 
     public function roster() {
        	return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
-       	    from athlete a left join users u on a.user_id = u.id where a.team = ? order by a.events", [$this->id]);
+       	    from athlete a left join users u on a.user_id = u.id where a.team = ? order by u.first_name, u.last_name", [$this->id]);
     }
 
     public function schedule() {
@@ -45,33 +45,38 @@ class Team extends Model
             order by date desc limit 3", [$this->id]);
     }
 
-    public function teamBestsBoys($event) {
-        return DB::select("select concat(u.first_name, ' ', u.last_name) as athlete_name, min(p.result) as result
-            from performance p left join athlete a on p.athlete_id = a.id
-            left join users u on a.user_id = u.id
-            where p.event_id = ? and p.team_id = ?
-            and p.relay_leg is null
-            and u.gender = 1
-            group by u.id
-            order by result", [$event, $this->id]);
-    }
+    public function teamBests($event_id, $gender) {
+        $event = \App\Event::find($event_id);
+        if ($event->open) {
+            return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result
+                from performance p left join athlete a on p.athlete_id = a.id
+                left join users u on a.user_id = u.id
+                where p.event_id = ? and p.team_id = ?
+                and p.relay_leg is null
+                and u.gender = ?
+                group by u.id
+                order by result", [$event_id, $this->id, $gender]); 
+        } 
 
-    public function teamBestsGirls($event) {
-        return DB::select("select concat(u.first_name, ' ', u.last_name) as athlete_name, min(p.result) as result
-            from performance p left join athlete a on p.athlete_id = a.id
-            left join users u on a.user_id = u.id
-            where p.event_id = ? and p.team_id = ?
-            and p.relay_leg is null
-            and u.gender = 0
-            group by u.id
-            order by result", [$event, $this->id]);
-    }
+        return DB::select("select concat(result, ' - ', group_concat(name order by performance_id separator ', ')) as result from 
+            (select r.result, u.name, r.id as relay_id, p.id as performance_id from relay r 
+            left join performance p on p.id in (r.first_leg, r.second_leg, r.third_leg, r.fourth_leg)
+            left join athlete a on p.athlete_id = a.id
+            left join (select id, concat(first_name, ' ', last_name) as name, gender from users) as u on a.user_id = u.id 
+            where r.event_id = ?
+            and r.team_id = ?
+            and u.gender = ?) as result
+            group by result.relay_id
+            order by result", [$event_id, $this->id, $gender]);
 
+        
+    }
+    
     // roster without athlete logged in
     public function teammates($athlete_id) {
         return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
             from athlete a left join users u on a.user_id = u.id where a.team = ? 
             and a.id != ?
-            order by a.events", [$this->id, $athlete_id]);
+            order by u.first_name, u.last_name", [$this->id, $athlete_id]);
     }
 }

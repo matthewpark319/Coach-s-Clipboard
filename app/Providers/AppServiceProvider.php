@@ -18,7 +18,11 @@ class AppServiceProvider extends ServiceProvider
         View::composer('coach/*', function($view) {
             $user = \Auth::user();
             $coach = \App\Coach::where('user_id', $user->id)->first();
-            $team = \App\Team::find($coach->head_coach_of);
+
+            // For now, a coach can only be part of 1 team. 
+            // In the future, a coach will be able to join multiple teams.
+            if ($coach->asst_coach_of == null) $team = \App\Team::find($coach->head_coach_of);
+            else $team = \App\Team::find($coach->asst_coach_of);
         
             $view->with('user', $user);
             $view->with('coach', $coach);

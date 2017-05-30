@@ -20,7 +20,14 @@
 					
 					<ul class="list-group">
 					@foreach ($meet->resultsIndividual($e->id, 1) as $result) 
-						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
+						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}
+							
+							<a href="{{ route('delete-individual', ['meet' => $meet->id, 'performance' => $result->id]) }}" id='remove'><img class="minus float-right" src="{{ asset('/images/red-minus-hi.png') }}"></a>
+
+							@if ($result->has_splits == 1)
+								<a href="{{ route('coach-splits', ['performance' => $result->id]) }}" class='float-right margin-right'>See Splits</a>
+							@endif
+						</li>
 					@endforeach
 					</ul>
 				</div>
@@ -37,10 +44,18 @@
 					@for ($i = 0; $i < count($results); $i+=4)
 						<ul class="list-group">
 							<div class="list-group-item">
+								<a href="{{ route('delete-relay', ['meet' => $meet->id, 'relay' => $results[$i]->relay_id]) }}" id='remove'><img class="minus float-right" src="{{ asset('/images/red-minus-hi.png') }}"></a>
+
 								<h4>{{ $results[$i]->total_time }}</h4>
+								<div>
 								@for ($j = $i; $j < 4; $j++)
-									<p>{{ $results[$j]->name . ' - ' . $results[$j]->result }}</p>
+									<p>{{ $results[$j]->name . ' - ' . $results[$j]->result }}
+									@if ($results[$j]->has_splits == 1)
+										<a href="{{ route('coach-splits', ['performance' => $results[$j]->performance_id]) }}" class='float-right margin-right'>See Splits</a>
+									@endif
+									</p>
 								@endfor
+								</div>
 							</div>
 						</ul>
 					@endfor
@@ -61,14 +76,37 @@
 					
 					<ul class="list-group">
 					@foreach ($meet->resultsIndividual($e->id, 0) as $result) 
-						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}</li>
+						<li class="list-group-item">{{ $result->name . ' - ' . $result->result }}
+							<a href="{{ route('delete-individual', ['meet' => $meet->id, 'performance' => $result->id]) }}" id='remove'><img class="minus float-right" src="{{ asset('/images/red-minus-hi.png') }}"></a>
+						</li>
 					@endforeach
 					</ul>
 				</div>	
 			@endif
 		@endforeach
 
-		
+		@foreach (\App\Event::getRelayEvents() as $e)
+			@php $results = $meet->resultsRelay($e->id, 0); @endphp
+
+			@if (count($results) > 0)
+				<div class="list-container">
+					<h4>{{ $e->name }}</h4>
+
+					@for ($i = 0; $i < count($results); $i+=4)
+						<ul class="list-group">
+							<div class="list-group-item">
+								<a href="{{ route('delete-relay', ['meet' => $meet->id, 'relay' => $results[$i]->relay_id]) }}" id='remove'><img class="minus float-right" src="{{ asset('/images/red-minus-hi.png') }}"></a>
+
+								<h4>{{ $results[$i]->total_time }}</h4>
+								@for ($j = $i; $j < 4; $j++)
+									<p>{{ $results[$j]->name . ' - ' . $results[$j]->result }}</p>
+								@endfor
+							</div>
+						</ul>
+					@endfor
+				</div>
+			@endif
+		@endforeach
 	</div>
 </div>
 @endsection

@@ -8,7 +8,7 @@
 
 	<div class="content-container-lg">
 		<div class="form-container">
-			<form class="form-horizontal" method="post">
+			<form id="form" class="form-horizontal" method="post">
 				{{ csrf_field() }}
 				<input name="team_id" type="hidden" value="{{ $team->id }}">
 				<div class="form-group">
@@ -53,12 +53,6 @@
 					</div>
 				</div>
 
-				<div class="button-container">
-					<a href="{{ route('coach-schedule') }}"> 
-						<button type="button" class="btn btn-default add-button">Back</button>
-					</a>
-					<button type="submit" class="btn btn-default add-button">Add</button>
-				</div>
 			</form>
 
 			<div class="container">
@@ -71,6 +65,15 @@
 			@endif
 			</div>
 		</div>
+
+		<div class="right-margin">
+            <div class="button-container">
+                <a href="{{ route('coach-schedule') }}"> 
+                    <button type="button" class="btn btn-default add-button">Back</button>
+                </a>
+                <button onclick="$('#form').submit()" class="btn btn-default add-button">Add</button>
+            </div>
+        </div>
 	</div>
 </div>
 @endsection

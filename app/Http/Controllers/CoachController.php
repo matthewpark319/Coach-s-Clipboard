@@ -14,10 +14,25 @@ use App\Announcement;
 use App\ScheduleEvent;
 use App\Performance;
 use App\Event;
+use App\Split;
 use App\Relay;
 
 class CoachController extends Controller
 {
+    public function showSplits(Athlete $athlete, Performance $performance) {
+        return view('coach/splits', ['athlete' => $athlete, 'performance' => $performance]);
+    }
+
+    public function deleteResultRelay(ScheduleEvent $meet, Relay $relay) {
+        $relay->delete();
+        return view('coach/view-meet', ['meet' => $meet]);
+    }
+
+    public function deleteResultIndividual(ScheduleEvent $meet, Performance $performance) {
+        $performance->delete();
+        return view('coach/view-meet', ['meet' => $meet]);
+    }
+
     public function deleteAnnouncement(Announcement $announcement) {
         $announcement->delete();
         return view('coach/announcements');
@@ -27,8 +42,8 @@ class CoachController extends Controller
         return view('coach/view-meet', ['meet' => $meet]);
     }
 
-    public function showTeamBests(Request $request) {
-        return view('coach/results', ['event' => $request->event]);
+    public function showTeamBests(Event $event) {
+        return view('coach/results', ['event' => $event]);
     }
 
     public function showResults() {
@@ -57,10 +72,20 @@ class CoachController extends Controller
     public function addResultsIndividual(Request $request, ScheduleEvent $meet) {
         
         Validator::make($request->all(), [
-            'result.*' => 'regex:/' . $this->timeRegex($request->event_type) . '/',
+            'result.*' => 'regex:/' . $this->timeRegex(Event::find($request->event)->type) . '/',
             'athlete.*' => 'distinct',
-            'place.*' => 'nullable|integer|min:1'
+            'place.*' => 'nullable|integer|min:1',
+            'lap_1.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_2.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lap_3.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_4.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lap_5.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_6.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lap_7.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_8.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/'
         ])->validate();
+
+        $LAPS = array('lap_1', 'lap_2', 'lap_3', 'lap_4', 'lap_5', 'lap_6', 'lap_7', 'lap_8');
 
         for ($i = 0; $i < sizeof($request->result); $i++) {
             $performance = new Performance;
@@ -71,6 +96,25 @@ class CoachController extends Controller
             $performance->team_id = $request->team_id;
             $performance->meet_id = $meet->id;
             $performance->save();
+
+            $has_splits = False;
+            for ($j = 0; $j < 8; $j++) {
+                $lap = $LAPS[$j];
+                $splits = $request->$lap;
+
+                if (count($splits) == 0) continue;
+                
+                $has_splits = True;
+                $split = new Split;
+                $split->performance_id = $performance->id;
+                $split->time = $splits[$i];
+                $split->lap = $j + 1; 
+                $split->save();
+            }
+            if ($has_splits) {
+                $performance->has_splits = 1;
+                $performance->save();
+            }
         }
 
         return view('coach/add-results-individual', ['successful' => 1, 'meet' => $meet]);
@@ -89,9 +133,15 @@ class CoachController extends Controller
             'splits.1' => 'regex:/' . $this->timeRegex($legs[1]->type) . '/',
             'splits.2' => 'regex:/' . $this->timeRegex($legs[2]->type) . '/',
             'splits.3' => 'regex:/' . $this->timeRegex($legs[3]->type) . '/',
-            'place' => 'integer|min:1',
-            'time' => 'regex:/\d{1,2}:\d{2}(\.\d{1,2})?/'
+            'place' => 'nullable|integer|min:1',
+            'time' => 'regex:/\d{1,2}:\d{2}(\.\d{1,2})?/',
+            'lap_1.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_2.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lap_3.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/',
+            'lab_4.*' => 'nullable|regex:/((\d:)?(\d))?\d(\.\d{1,2})?/'
         ])->validate();
+
+        $LAPS = array('lap_1', 'lap_2', 'lap_3', 'lap_4');
 
         $relay = new Relay;
         $relay->event_id = $request->event;
@@ -100,6 +150,7 @@ class CoachController extends Controller
         $relay->meet_id = $meet->id;
         $relay->team_id = $request->team_id;
         
+        $has_splits = False;
         for ($i = 0; $i < sizeof($request->splits); $i++) {
             $leg = new Performance;
             $leg->event_id = $legs[$i]->id;
@@ -115,15 +166,34 @@ class CoachController extends Controller
             else if ($i == 1) $relay->second_leg = $leg->id;
             else if ($i == 2) $relay->third_leg = $leg->id;
             else $relay->fourth_leg = $leg->id;
+
+            for ($j = 0; $j < 4; $j++) {
+                $lap = $LAPS[$j];
+                $splits = $request->$lap;
+
+                if (count($splits) == 0) continue;
+                
+                $has_splits = True;
+                $split = new Split;
+                $split->performance_id = $leg->id;
+                $split->time = $splits[$i];
+                $split->lap = $j + 1; 
+                $split->save();
+            }
+            if ($has_splits) {
+                $leg->has_splits = 1;
+                $leg->save();
+            }
         }
 
         $relay->save();
 
-        return view('coach/add-results-relay', ['successful' => 1, 'meet' => $meet]);
+        return view('coach/add-results-relay', ['successful' => 1, 'meet' => $meet, 'relay' => null]);
     }
 
-    public function showAddResultsRelay(ScheduleEvent $meet) {
-        return view('coach/add-results-relay', ['successful' => 0, 'meet' => $meet]);
+    public function showAddResultsRelay(ScheduleEvent $meet, $relay = null) {
+        
+        return view('coach/add-results-relay', ['successful' => 0, 'meet' => $meet, 'relay' => Event::find($relay)]);
     }
 
     public function addAnnouncement(Request $request) {
@@ -183,11 +253,11 @@ class CoachController extends Controller
     }
 
     public function timeRegex($event_type) {
-        if (strcmp($event_type, 'sprints') == 0)
-            return '([\d]:)?(\d){1,2}\.(\d){1,2}';
-        elseif (strcmp($event_type, 'distance') == 0) 
+        if ($event_type == 0)
+            return '((\d:)?(\d))?\d(\.\d{1,2})?';
+        elseif ($event_type == 1) 
             return '\d{1,2}:\d{2}(\.\d{1,2})?';
-        elseif (strcmp($event_type, 'field') == 0)
+        elseif ($event_type == 2)
             return '\d{1,2}-\d{1,2}(\.\d{1,2})?';
     }
 
