@@ -30,7 +30,7 @@
             <div class="navbar-container">
                 <ul class="nav nav-tabs">
                     <li id="home"><a href="{{ route('coach-home') }}">Home</a></li>
-                    <li id="roster"><a href="{{ route('coach-roster') }}">Roster</a></li>
+                    <li id="roster"><a href="{{ route('coach-roster') }}">Team</a></li>
                     <li id="schedule"><a href="{{ route('coach-schedule') }}">Schedule</a></li>
                     <li id="results"><a href="{{ route('coach-results') }}">Results</a></li>
                     <li id="announcements"><a href="{{ route('coach-announcements') }}">Announcements</a></li>

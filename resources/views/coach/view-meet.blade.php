@@ -47,15 +47,15 @@
 								<a href="{{ route('delete-relay', ['meet' => $meet->id, 'relay' => $results[$i]->relay_id]) }}" id='remove'><img class="minus float-right" src="{{ asset('/images/red-minus-hi.png') }}"></a>
 
 								<h4>{{ $results[$i]->total_time }}</h4>
-								<div>
+								
 								@for ($j = $i; $j < 4; $j++)
-									<p>{{ $results[$j]->name . ' - ' . $results[$j]->result }}
+									<p>{{ $results[$j]->result }}
 									@if ($results[$j]->has_splits == 1)
 										<a href="{{ route('coach-splits', ['performance' => $results[$j]->performance_id]) }}" class='float-right margin-right'>See Splits</a>
 									@endif
 									</p>
 								@endfor
-								</div>
+								
 							</div>
 						</ul>
 					@endfor

@@ -12,6 +12,16 @@ class Team extends Model
     //
     protected $table = 'team';
 
+    public function headCoachName() {
+        return DB::select("select concat(u.first_name, ' ', u.last_name) as name
+            from coach c left join users u on c.user_id = u.id where head_coach_of = ?", [$this->id])[0]->name;
+    }
+
+    public function nonHeadCoaches() {
+        return DB::select("select concat(u.first_name, ' ', u.last_name) as name
+            from coach c left join users u on c.user_id = u.id where asst_coach_of = ?", [$this->id]);
+    }
+
     public function roster() {
        	return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
        	    from athlete a left join users u on a.user_id = u.id where a.team = ? order by u.first_name, u.last_name", [$this->id]);

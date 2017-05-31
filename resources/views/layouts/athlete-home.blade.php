@@ -31,7 +31,7 @@
                 <ul class="nav nav-tabs">
                     <li id="home"><a href="{{ route('athlete-home') }}">Home</a></li>
                     <li id="my_profile"><a href="{{ route('my-profile') }}">My Profile</a></li>
-                    <li id="roster"><a href="{{ route('athlete-roster') }}">Roster</a></li>
+                    <li id="roster"><a href="{{ route('athlete-roster') }}">Team</a></li>
                     <li id="schedule"><a href="{{ route('athlete-schedule') }}">Schedule</a></li>
                     <li id="results"><a href="{{ route('athlete-results') }}">Results</a></li>
                     <li id="announcements"><a href="{{ route('athlete-announcements') }}">Announcements</a></li>
