@@ -51,13 +51,17 @@ class PreLoginController extends Controller
         // validate team
         $this->validate($request, [
             'name' => 'max:255',
-            'school' => 'max:255|unique:team,school',
+            'school' => 'max:255',
+            'password' => 'min:6'
         ]);
+
+        
 
         // register team
         $team = new Team;
         $team->name = $request->name;
         $team->school = $request->school;
+        $team->password = bcrypt($request->password);
         $team->save();
 
         $coach = new Coach;
@@ -67,6 +71,8 @@ class PreLoginController extends Controller
         $coach->save();
 
         $request->session()->flush();
+
+        $request->session()->flash('password', 'Your team password is: ' . $request->password);
         return redirect('register/account-successful')->with('message', 'Your team ID is: ' . $team->id);
     }
     
@@ -76,6 +82,7 @@ class PreLoginController extends Controller
         ]);
 
         $team = Team::find($request->team_id);
+        if (!password_verify($request->password, $team->password)) return view('register/join-team', ['password_incorrect' => True]);
 
         // register user
         $user_data = $request->session()->all();
@@ -105,7 +112,7 @@ class PreLoginController extends Controller
     }
 
     public function showJoinTeam() {
-        return view('register/join-team');
+        return view('register/join-team', ['password_incorrect' => False]);
     }
 
     public function showRegistrationPage() {
@@ -121,7 +128,7 @@ class PreLoginController extends Controller
         } else {
             $request->session()->put('athlete-events', $request->events);
             $request->session()->put('level', $request->level);
-			return redirect()->route('join-team');
+			return redirect()->route('join-team', ['password_incorrect' => False]);
         }
     }
 

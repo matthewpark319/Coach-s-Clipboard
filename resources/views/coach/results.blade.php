@@ -45,7 +45,7 @@
 					@else
 						<ul class="list-group">
 						@foreach ($team->teamBests($event->id, 0) as $p)
-							<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}</li>
+							<li class="list-group-item">{{ $p->result }}</li>
 						@endforeach
 						</ul>
 					@endif

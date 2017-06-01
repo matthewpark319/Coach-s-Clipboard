@@ -102,6 +102,8 @@ Route::group(['prefix' => 'coach'], function() {
 	Route::get('view-meet/{meet}/delete-individual/{performance}', 'CoachController@deleteResultIndividual')->name('delete-individual');
 
 	Route::get('view-meet/{meet}/delete-relay/{relay}', 'CoachController@deleteResultRelay')->name('delete-relay');
+
+	Route::get('manage-team', 'CoachController@showManageTeam')->name('manage-team');
 });
 
 // athlete routes

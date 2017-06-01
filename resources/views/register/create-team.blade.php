@@ -38,6 +38,16 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="password" class="col-md-4 control-label">Create Team Password</label>
+
+                            <div class="col-md-6">
+                                <input id="password" type="text" class="form-control" name="password" required>
+
+                            </div>
+                        </div>
+
+
                         @if (count($errors) > 0)
                         <div class="form-group">
                             @foreach($errors->all() as $e)

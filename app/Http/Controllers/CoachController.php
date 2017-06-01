@@ -19,6 +19,10 @@ use App\Relay;
 
 class CoachController extends Controller
 {
+    public function showManageTeam() {
+        return view('coach/manage-team');
+    }
+
     public function showSplits(Athlete $athlete, Performance $performance) {
         return view('coach/splits', ['athlete' => $athlete, 'performance' => $performance]);
     }
