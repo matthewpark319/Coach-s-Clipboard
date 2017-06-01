@@ -17,24 +17,27 @@
                             </div>
                         </div>    
 
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                        @if (!session()->has('athlete-events')) 
+                        <div class="form-group">
                             <label for="password" class="col-md-4 control-label">Enter Team Password</label>
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control" name="password" required>
                             </div>
                         </div>
+                        @endif
 
-                        @if (count($errors) > 0)
-	                        <div class="form-group">
-	                            @foreach($errors->all() as $e)
-	                            	<li class="error-margin-left">{{ $e }}</li>
-	                        	@endforeach
-
-                                @if ($password_incorrect)
-                                    <li class="error-margin-left">Incorrect password</li>
-                                @endif
-	                        </div>
-	                    @endif
+                        
+                        <div class="form-group">
+                            @if (count($errors) > 0)
+                                @foreach($errors->all() as $e)
+                                	<li class="error-margin-left">{{ $e }}</li>
+                            	@endforeach
+                            @endif
+                            @if ($password_incorrect == True)
+                                <li class="error-margin-left">Incorrect password</li>
+                            @endif
+                        </div>
+	                    
 
 	                    
                         <div class="form-group">

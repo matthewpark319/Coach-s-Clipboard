@@ -83,19 +83,17 @@ Route::group(['prefix' => 'coach'], function() {
 
 	Route::get('delete-announcement/{announcement}', 'CoachController@deleteAnnouncement')->name('delete-announcement');
 
-	Route::get('results', 'CoachController@showResults')->name('coach-results');
-
 	Route::get('add-results/individual/{meet}', 'CoachController@showAddResultsIndividual')->name('add-results-individual');
 
 	Route::post('add-results/individual/{meet}', 'CoachController@addResultsIndividual');
 
-	Route::get('add-results/relay/{meet}/{relay?}', 'CoachController@showAddResultsRelay')->name('add-results-relay');
+	Route::get('add-results/relay/{meet}/{relay?}/{gender?}', 'CoachController@showAddResultsRelay')->name('add-results-relay');
 
 	Route::post('add-results/relay/{meet}', 'CoachController@addResultsRelay');
 
 	Route::get('results', 'CoachController@showResults')->name('coach-results');
 
-	Route::get('results/team-bests/{event}', 'CoachController@showTeamBests')->name('coach-team-bests');
+	Route::get('results/team-bests/{event}/{include_relays?}', 'CoachController@showTeamBests')->name('coach-team-bests');
 
 	Route::get('view-meet/{meet}', 'CoachController@showViewMeet')->name('coach-view-meet');
 

@@ -22,7 +22,12 @@ class Team extends Model
             from coach c left join users u on c.user_id = u.id where asst_coach_of = ?", [$this->id]);
     }
 
-    public function roster() {
+    public function roster($gender = null) {
+        if (!is_null($gender)) {
+            return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
+            from athlete a left join users u on a.user_id = u.id where a.team = ? and gender = ?
+            order by u.first_name, u.last_name", [$this->id, $gender]);
+        }
        	return DB::select("select a.*, concat(u.first_name, ' ', u.last_name) as name
        	    from athlete a left join users u on a.user_id = u.id where a.team = ? order by u.first_name, u.last_name", [$this->id]);
     }
@@ -55,9 +60,18 @@ class Team extends Model
             order by date desc limit 3", [$this->id]);
     }
 
-    public function teamBests($event_id, $gender) {
+    public function teamBests($event_id, $gender, $include_relays = False) {
         $event = \App\Event::find($event_id);
         if ($event->open) {
+            if ($include_relays) {
+                return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result
+                    from performance p left join athlete a on p.athlete_id = a.id
+                    left join users u on a.user_id = u.id
+                    where p.event_id = ? and p.team_id = ?
+                    and u.gender = ?
+                    group by u.id
+                    order by result", [$event_id, $this->id, $gender]); 
+            }
             return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result
                 from performance p left join athlete a on p.athlete_id = a.id
                 left join users u on a.user_id = u.id

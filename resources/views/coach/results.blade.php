@@ -23,15 +23,18 @@
                         @endforeach
 					</select>
 				</div>
+
+				<p class="inline-block" for="include_relays" style="margin-top:7px">Include Relay Splits</p>
+				<input id="include_relays" type="checkbox">
 			</div>
 			@if (isset($event))
 				<div class="list-container" style="margin-top:30px">
 					<h4>Boys</h4>
-					@if (count($team->teamBests($event->id, 1)) == 0)
+					@if (count($team->teamBests($event->id, 1, $include_relays)) == 0)
 						<h5>No Results</h5>
 					@else
 						<ul class="list-group">
-						@foreach ($team->teamBests($event->id, 1) as $p)
+						@foreach ($team->teamBests($event->id, 1, $include_relays) as $p)
 							<li class="list-group-item">{{ $p->result }}</li>
 						@endforeach
 						</ul>
@@ -40,11 +43,11 @@
 
 				<div class="list-container" style="margin-top:30px">
 					<h4>Girls</h4>
-					@if (count($team->teamBests($event->id, 0)) == 0)
+					@if (count($team->teamBests($event->id, 0, $include_relays)) == 0)
 						<h5>No Results</h5>
 					@else
 						<ul class="list-group">
-						@foreach ($team->teamBests($event->id, 0) as $p)
+						@foreach ($team->teamBests($event->id, 0, $include_relays) as $p)
 							<li class="list-group-item">{{ $p->result }}</li>
 						@endforeach
 						</ul>
@@ -85,9 +88,27 @@
 </div>
 
 <script>
-
 function showTeamBests() {
-	window.location.href = "/coach/results/team-bests/" + $("#event option:selected").val();
+	if ($('#event').val()) {
+		@if (isset($include_relays))
+			window.location.href = "/coach/results/team-bests/" + $("#event option:selected").val() + "/{{ $include_relays }}";
+		@else
+			window.location.href = "/coach/results/team-bests/" + $("#event option:selected").val() + "/";
+		@endif
+	} else {
+		window.location.href = "{{ route('coach-results') }}"; 
+	}
 }
+
+@if (isset($event))
+$('#include_relays').change(function() {
+	window.location.href = "{{ route('coach-team-bests', ['event' => $event, 'include_relays' => !$include_relays ]) }}";
+});
+	@if ($include_relays)
+	$(document).ready(function(){
+		$('#include_relays').attr('checked', 'checked');
+	});
+	@endif
+@endif
 </script>
 @endsection

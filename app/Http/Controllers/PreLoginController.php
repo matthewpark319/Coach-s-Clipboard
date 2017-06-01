@@ -16,14 +16,16 @@ class PreLoginController extends Controller
 
     public function toSetupCoachOrAthlete(Request $request) {
         $this->validate($request, [
-            'email' => 'max:255|unique:users',
+            'first_name' => 'max:255',
+            'last_name' => 'max:255',
+            'username' => 'max:255|unique:users',
             'password' => 'min:6|confirmed',
         ]);
 
         // save all user info in session
         $request->session()->put('first_name', $request->first_name);
         $request->session()->put('last_name', $request->last_name);
-        $request->session()->put('email', $request->email);
+        $request->session()->put('username', $request->username);
         $request->session()->put('coach_or_athlete', $request->coach_or_athlete);
         $request->session()->put('gender', $request->gender);
         $request->session()->put('password', $request->password); 
@@ -55,8 +57,6 @@ class PreLoginController extends Controller
             'password' => 'min:6'
         ]);
 
-        
-
         // register team
         $team = new Team;
         $team->name = $request->name;
@@ -78,11 +78,10 @@ class PreLoginController extends Controller
     
     public function joinTeam(Request $request) {
         $this->validate($request, [
-            'team_id' => 'exists:team,id'
+            'team_id' => 'exists:team,id|integer'
         ]);
 
         $team = Team::find($request->team_id);
-        if (!password_verify($request->password, $team->password)) return view('register/join-team', ['password_incorrect' => True]);
 
         // register user
         $user_data = $request->session()->all();
@@ -96,11 +95,15 @@ class PreLoginController extends Controller
             $athlete->team = $team->id;
             $athlete->save();
         } else {
+
+            if (!password_verify($request->password, $team->password)) return view('register/join-team', ['password_incorrect' => True]);
             $coach = new Coach;
             $coach->title = $request->session()->get('coach-title');
             $coach->user_id = $user_id;
             $coach->asst_coach_of = $team->id;
             $coach->save();
+
+
         }
 
         $request->session()->flush();

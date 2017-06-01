@@ -16,15 +16,19 @@
                         <label for="event">Event</label>
                    
                         <select id="event" class="form-control" name="event" onchange="setRelay()" required>
-                            <option value="">-- Select Event --</option>
+                            <option value="0">-- Select Event --</option>
 
                             @foreach (\App\Event::getRelayEvents() as $e)
                                 <option value="{{ $e->id }}" class="{{ $e->type }}">{{ $e->name }}</option>
                             @endforeach
                         </select>
 
+                        
                         <label for="relay" style="padding-left:15px">Relay</label>
                         <input id="relay" type="checkbox" name="relay" class="checkbox" onchange="changeToIndividual()" checked>
+
+                        <label for="gender" style="padding-left:15px">Relay: {{ $gender == 1 ? 'Boys' : 'Girls'}}</label>
+                        <a id="gender" class="margin-left" href="{{ route('add-results-relay', ['meet' => $meet->id, 'relay' => is_null($relay) ? 0 : $relay, 'gender' => $gender ^ 1 ]) }}">Change to {{ $gender == 1 ? 'Girls' : 'Boys' }}</a>
                         
                     </div>
                     
@@ -43,7 +47,7 @@
 
                         <select id="first_leg" class="form-control" name="legs[]" required>
                             <option value="">-- Select Athlete --</option>
-                            @foreach ($team->roster() as $athlete)
+                            @foreach ($team->roster($gender) as $athlete)
                                 <option value="{{ $athlete->id }}">{{ $athlete->name }}</option>
                             @endforeach
                         </select>
@@ -68,7 +72,7 @@
 
                         <select id="second_leg" class="form-control" name="legs[]" required>
                             <option value="">-- Select Athlete --</option>
-                            @foreach ($team->roster() as $athlete)
+                            @foreach ($team->roster($gender) as $athlete)
                                 <option value="{{ $athlete->id }}">{{ $athlete->name }}</option>
                             @endforeach
                         </select>
@@ -93,7 +97,7 @@
 
                         <select id="third_leg" class="form-control" name="legs[]" required>
                             <option value="">-- Select Athlete --</option>
-                            @foreach ($team->roster() as $athlete)
+                            @foreach ($team->roster($gender) as $athlete)
                                 <option value="{{ $athlete->id }}">{{ $athlete->name }}</option>
                             @endforeach
                         </select>
@@ -118,7 +122,7 @@
 
                         <select id="anchor_leg" class="form-control" name="legs[]" required>
                             <option value="">-- Select Athlete --</option>
-                            @foreach ($team->roster() as $athlete)
+                            @foreach ($team->roster($gender) as $athlete)
                                 <option value="{{ $athlete->id }}">{{ $athlete->name }}</option>
                             @endforeach
                         </select>
@@ -178,7 +182,7 @@ function changeToIndividual() {
 }
 
 function setRelay() {
-    window.location.href = '/coach/add-results/relay/' + "{{ $meet->id }}/" + $('#event option:selected').val();
+    window.location.href = '/coach/add-results/relay/' + "{{ $meet->id }}/" + $('#event option:selected').val() + "/{{ $gender }}";
 }
 
 @if ($relay != null) 

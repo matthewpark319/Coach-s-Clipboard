@@ -46,8 +46,8 @@ class CoachController extends Controller
         return view('coach/view-meet', ['meet' => $meet]);
     }
 
-    public function showTeamBests(Event $event) {
-        return view('coach/results', ['event' => $event]);
+    public function showTeamBests(Event $event, $include_relays = False) {
+        return view('coach/results', ['event' => $event, 'include_relays' => $include_relays]);
     }
 
     public function showResults() {
@@ -192,12 +192,12 @@ class CoachController extends Controller
 
         $relay->save();
 
-        return view('coach/add-results-relay', ['successful' => 1, 'meet' => $meet, 'relay' => null]);
+        return view('coach/add-results-relay', ['successful' => 1, 'gender' => $gender, 'meet' => $meet, 'relay' => null]);
     }
 
-    public function showAddResultsRelay(ScheduleEvent $meet, $relay = null) {
-        
-        return view('coach/add-results-relay', ['successful' => 0, 'meet' => $meet, 'relay' => Event::find($relay)]);
+    public function showAddResultsRelay(ScheduleEvent $meet, $relay = null, $gender = 1) {
+        if ($relay == 0) $relay = null;
+        return view('coach/add-results-relay', ['successful' => 0, 'gender' => $gender, 'meet' => $meet, 'relay' => Event::find($relay)]);
     }
 
     public function addAnnouncement(Request $request) {
