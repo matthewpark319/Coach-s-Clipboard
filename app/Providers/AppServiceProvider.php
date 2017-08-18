@@ -27,18 +27,16 @@ class AppServiceProvider extends ServiceProvider
             $view->with('user', $user);
             $view->with('coach', $coach);
             $view->with('team', $team);
-            $view->with('view', $view->name());
         });
 
         View::composer('athlete/*', function($view) {
             $user = \Auth::user();
             $athlete = \App\Athlete::where('user_id', $user->id)->first();
-            $team = \App\Team::find($athlete->team);
+            $team = \App\Team::find($athlete->team_id);
         
             $view->with('user', $user);
             $view->with('athlete', $athlete);
             $view->with('team', $team);
-            $view->with('view', $view->name());
         });
     }
 

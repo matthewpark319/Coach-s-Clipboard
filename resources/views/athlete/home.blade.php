@@ -1,10 +1,20 @@
 @extends('layouts.athlete-home')
 
 @section('content')
-
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Team: {{ $team->school . " " . $team->name }}</h2>
+		<div class="header-center">
+			<h2 class="top-header">{{ $team->school . " " . $team->name }}</h2>
+		</div>
+		
+		<div class="select-right">
+			<select id="season" onchange="changeSeason('home')">
+				<option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+				@foreach ($team->seasonsNotSelected() as $season) 
+					<option value="{{ $season->id }}">{{ $season->info }}</option>
+				@endforeach
+			</select>
+		</div>
 	</div>
 
 	<div class="home-section-container">

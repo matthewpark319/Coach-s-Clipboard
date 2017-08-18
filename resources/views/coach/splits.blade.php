@@ -3,7 +3,9 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Splits</h2>
+		<div class="header-center">
+			<h2 class="top-header">Splits</h2>
+		</div>
 	</div>
 
 	<div class="content-container-lg">

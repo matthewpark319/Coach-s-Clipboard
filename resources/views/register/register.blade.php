@@ -103,7 +103,10 @@
                                 <button type="submit" class="btn btn-primary">
                                     Register
                                 </button>
+
+                                <a href="{{ route('pre-registered') }}" class="float-right" style="line-height:36.8px">Pre-registered by a coach?</a>
                             </div>
+
                         </div>
                     </form>
                 </div>

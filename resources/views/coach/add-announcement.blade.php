@@ -3,7 +3,10 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Add Announcement</h2>
+		<div class="header-center">
+			<h2 class="top-header">New Announcement</h2>
+		</div>
+		
 	</div>
 
 	<div class="content-container-lg">
@@ -19,7 +22,11 @@
 			</form>
 
 			<div class="container">
-			@if ($successful)
+			@if (count($errors) > 0)
+				@foreach ($errors->all() as $e)
+					<li>{{ $e }}</li>
+				@endforeach
+			@elseif ($successful)
 				<h4>New Announcement Added</h4>
 			@endif
 			</div>
@@ -27,7 +34,7 @@
 
 		<div class="right-margin">
 	        <div class="button-container">
-	            <a href="{{ route('coach-announcement') }}"> 
+	            <a href="{{ route('coach-announcements') }}"> 
 	                <button type="button" class="btn btn-default add-button">Back</button>
 	            </a>
 	            <button onclick="$('#form').submit()" class="btn btn-default add-button">Add</button>

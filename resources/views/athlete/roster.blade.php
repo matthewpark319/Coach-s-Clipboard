@@ -3,12 +3,16 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Team</h2>
+		<div class="header-center">
+            <h2 class="top-header">Team</h2>
+        </div>
 	</div>
 
 	<div class="half-page">
         <div class="half-header-container">
-            <h3 class="top-header">Roster</h3>
+            <div class="header-center">
+                <h3 class="top-header">Roster</h3>
+            </div>
         </div>
         <div class="half-content">
             <div class="list-container-scroll">
@@ -38,7 +42,9 @@
 
     <div class="half-page">
         <div class="half-header-container">
-            <h3 class="top-header">Team Info</h3>
+            <div class="header-center">
+                <h3 class="top-header">Team Info</h3>
+            </div>
         </div>
 
         <div class="half-content">

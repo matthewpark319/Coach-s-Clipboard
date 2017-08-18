@@ -3,34 +3,74 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Team</h2>
+		<div class="header-center">
+            <h2 class="top-header">Team</h2>
+        </div>
+
+        <div class="select-right">
+            <select id="season" onchange="changeSeason('roster')">
+                <option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+                @foreach ($team->seasonsNotSelected() as $season) 
+                    <option value="{{ $season->id }}">{{ $season->info }}</option>
+                @endforeach
+            </select>
+        </div>
 	</div>
 
 	<div class="half-page">
         <div class="half-header-container">
-            <h3 class="top-header">Roster</h3>
+            @if (session('season') == $team->currentSeason()->id)
+                <div class="header-link float-left" style="left:10%">
+                    <a href="{{ route('manage-team') }}" class="btn-default btn vertical-align-center">Manage</a>
+                </div>
+            
+                <div class="header-center" style="left:10%">
+                    <h3 class="top-header" style="top:20%">Roster</h3>
+                </div>
+            
+                <div class="header-link float-right" style="right:10%">
+                    <a href="{{ route('add-athlete') }}" class="btn-default btn vertical-align-center">Add Athlete</a>
+                </div>
+            @else 
+                <div class="header-center" style="left:30%">
+                    <h3 class="top-header" style="top:20%">Roster</h3>
+                </div>
+                <h5 class="margin-left">--> Choose current season to manage roster</h5>
+            @endif
         </div>
         <div class="half-content">
             <div class="list-container-scroll">
-                <table class="table table-bordered table-hover">
-                    <col style="width:33%">
-                    <col style="width:33%">
-                    <col style="width:34%">
-                    <thead>
-                        <th>Name</th>
-                        <th>Level</th>
-                        <th>Events</th>
-                    </thead>
-                    <tbody>
-                        @foreach ($team->roster() as $athlete)
-                            <tr>
-                                <td><a href="{{ route('coach-view-athlete', ['athlete' => $athlete->id]) }}">{{ $athlete->name }}</a></td>
-                                <td>{{ $athlete->level }}</td>
-                                <td>{{ $athlete->events }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @if (count($team->roster()) > 0)
+                    <table class="table table-bordered table-hover">
+                        <col style="width:33%">
+                        <col style="width:33%">
+                        <col style="width:34%">
+                        <thead>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Class</th>
+                        </thead>
+                        <tbody>
+                            @foreach ($team->roster() as $athlete)                               
+                                @if (is_null($athlete->username))
+                                    <tr class="danger">
+                                        <td><a href="{{ route('coach-view-athlete', ['athlete' => $athlete->id]) }}">{{ $athlete->name }}</a></td>
+                                        <td>Not Registered</td>
+                                        <td>{{ $athlete->grad_year }}</td>
+                                    </tr>
+                                @else 
+                                    <tr>
+                                        <td><a href="{{ route('coach-view-athlete', ['athlete' => $athlete->id]) }}">{{ $athlete->name }}</a></td>
+                                        <td>{{ $athlete->username }}</td>
+                                        <td>{{ $athlete->grad_year }}</td>
+                                    </tr>
+                                @endif                
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <h4>No athletes on roster</h4>
+                @endif
             </div>
         </div>
         
@@ -38,7 +78,9 @@
 
     <div class="half-page">
         <div class="half-header-container">
-            <h3 class="top-header">Team Info</h3>
+            <div class="header-center">
+                <h3 class="top-header">Team Info</h3>
+            </div>
         </div>
 
         <div class="half-content">
@@ -48,6 +90,7 @@
             @foreach ($team->nonHeadCoaches() as $c)
                 <h4 class="info">Assistant Coach: {{ $c->name }}</h4>
             @endforeach
+            <h4 class="info">Team ID: {{ $team->id }}</h4>
         </div>
         
     </div>

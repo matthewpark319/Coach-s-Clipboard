@@ -4,13 +4,17 @@
 <div class="main">
 	<div class="top-header-container">
 		<a class="btn btn-default back-button" href="{{ route('athlete-results') }}"> Back</a>
-		<h2 class="top-header">Results: {{ $meet->name }}</h2>
+		<div class="header-center">
+            <h2 class="top-header">Results: {{ $meet->name }}</h2>
+        </div>
 		
 	</div>
 
 	<div class="half-page">
 		<div class="half-header-container">
-			<h3 class="top-header">Boys</h3>
+			<div class="header-center">
+				<h3 class="top-header">Boys</h3>
+			</div>
 		</div>
 
 		@foreach (\App\Event::getIndividualEvents() as $e)
@@ -64,7 +68,9 @@
 
 	<div class="half-page">
 		<div class="half-header-container">
-			<h3 class="top-header">Girls</h3>
+			<div class="header-center">
+				<h3 class="top-header">Girls</h3>
+			</div>
 		</div>
 
 		@foreach (\App\Event::getIndividualEvents() as $e)

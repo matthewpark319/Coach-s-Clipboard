@@ -7,9 +7,61 @@ use App\Http\Controllers\Auth\Register;
 use App\Coach;
 use App\Athlete;
 use App\Team;
+use App\User;
+use App\RosterSpot;
+use App\Season;
 
 class PreLoginController extends Controller
 {
+    public function showAccountSuccessful($message, $team_password = null) {
+        session()->flush();
+        return view('register/account-successful', ['message' => $message, 'team_password' => $team_password]);
+    }
+
+    public function completePreRegistration(Request $request) {
+        $this->validate($request, [
+            'username' => 'max:255|unique:users',
+            'password' => 'min:6|confirmed',
+        ]);
+
+        $user = User::find($request->user_id);
+        $user->username = $request->username;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        $team = Team::find(session('pr_team_id'));
+        return $this->showAccountSuccessful('You joined the ' . $team->school . ' ' . $team->name);
+    }
+
+    public function chooseSeason(Request $request) {
+        $spot = new RosterSpot;
+        $spot->season_id = $request->season;
+        $spot->athlete_id =  $request->session()->get('athlete_id');
+        $spot->save();
+
+        $team = Team::find($request->session()->get('team_id'));
+
+        return $this->showAccountSuccessful('You joined the ' . $team->school . ' ' . $team->name);
+    }
+
+    public function prChooseSeason(Request $request) {
+        $request->session()->put('pr_season_id', $request->season);
+        return view('register/complete-pr', ['team' => Team::find(session('pr_team_id'))]);
+    }
+
+    public function preRegisteredTeamID(Request $request) {
+        $this->validate($request, [
+            'team_id' => 'exists:team,id'
+        ]);
+
+        $request->session()->put('pr_team_id', $request->team_id);
+        return view('register/choose-season', ['team' => Team::find($request->team_id), 'route' => 'pr-choose-season']);
+    }
+
+    public function showPreRegistered() {
+        return view('register/pre-registered');
+    }
+
     public function showLoginSuccessful() {
         return view('register/account-successful');
     }
@@ -33,15 +85,11 @@ class PreLoginController extends Controller
         if ($request->coach_or_athlete)
             return redirect()->route('create-coach');
         else
-            return redirect()->route('create-athlete');
+            return redirect()->route('join-team');
     }
 
     public function showCreateCoach() {
         return view('register/create-coach');
-    }
-
-    public function showCreateAthlete() {
-        return view('register/create-athlete');
     }
 
     public function createTeam(Request $request) {
@@ -54,7 +102,8 @@ class PreLoginController extends Controller
         $this->validate($request, [
             'name' => 'max:255',
             'school' => 'max:255',
-            'password' => 'min:6'
+            'password' => 'min:6',
+            'season_year' => 'regex:/(\d){4}/'
         ]);
 
         // register team
@@ -64,21 +113,28 @@ class PreLoginController extends Controller
         $team->password = bcrypt($request->password);
         $team->save();
 
+        // register first season for team
+        $season = new Season;
+        $season->year = $request->season_year;
+        $season->name = $request->season_name;
+        $season->team_id = $team->id;
+        $season->current = 1;
+        $season->save();
+
+        // register coach
         $coach = new Coach;
         $coach->title = $request->session()->get('coach-title');
         $coach->user_id = $user_id;
         $coach->head_coach_of = $team->id;
         $coach->save();
 
-        $request->session()->flush();
-
-        $request->session()->flash('password', 'Your team password is: ' . $request->password);
-        return redirect('register/account-successful')->with('message', 'Your team ID is: ' . $team->id);
+        return $this->showAccountSuccessful('Your team ID is: ' . $team->id, 'Your team password is: ' . $request->password);
     }
     
     public function joinTeam(Request $request) {
         $this->validate($request, [
-            'team_id' => 'exists:team,id|integer'
+            'team_id' => 'exists:team,id|integer',
+            'grad_year' => 'nullable|regex:/(\d){4}/'
         ]);
 
         $team = Team::find($request->team_id);
@@ -87,27 +143,27 @@ class PreLoginController extends Controller
         $user_data = $request->session()->all();
         $user_id = $this->register($user_data);
 
-        if ($request->session()->has('athlete-events')) {
-            $athlete = new Athlete;
-            $athlete->events = $request->session()->get('athlete-events');
-            $athlete->level = $request->session()->get('level');
-            $athlete->user_id = $user_id;
-            $athlete->team = $team->id;
-            $athlete->save();
-        } else {
-
+        if ($request->session()->get('coach_or_athlete')) {
             if (!password_verify($request->password, $team->password)) return view('register/join-team', ['password_incorrect' => True]);
             $coach = new Coach;
             $coach->title = $request->session()->get('coach-title');
             $coach->user_id = $user_id;
             $coach->asst_coach_of = $team->id;
             $coach->save();
+        } else {
+            $athlete = new Athlete;
+            
+            $athlete->user_id = $user_id;
+            $athlete->team_id = $team->id;
+            $athlete->grad_year = $request->grad_year;
+            $athlete->save();
 
-
+            $request->session()->flash('team_id', $team->id);
+            $request->session()->flash('athlete_id', $athlete->id);
+            return view('register/choose-season', ['team' => $team, 'route' => 'choose-season']);
         }
 
-        $request->session()->flush();
-        return redirect('register/account-successful')->with('message', 'You joined the ' . $team->school . ' ' . $team->name);
+        return $this->showAccountSuccessful('You joined the ' . $team->school . ' ' . $team->name);
     }
 
     public function showCreateTeam() {
@@ -123,16 +179,10 @@ class PreLoginController extends Controller
     }
 
     public function toSetupTeam(Request $request) {
-        // 1 = coach, 0 = athlete
-        $coach_or_athlete = $request->session()->get('coach_or_athlete');
-    	if ($coach_or_athlete) {
-            $request->session()->put('coach-title', $request->title);
-			return view('register/register-team');
-        } else {
-            $request->session()->put('athlete-events', $request->events);
-            $request->session()->put('level', $request->level);
-			return redirect()->route('join-team', ['password_incorrect' => False]);
-        }
+        // only coaches will go here
+        $request->session()->put('coach-title', $request->title);
+		return view('register/register-team');
+        
     }
 
     public function register(array $data) {

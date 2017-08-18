@@ -95,6 +95,12 @@ body {
 	display:inline;
 }
 
+.home-header-container {
+	height:20%;
+	width:100%;
+	position:relative;
+}
+
 .top-header {
 	margin:0;
 	position:relative;
@@ -103,7 +109,6 @@ body {
 }
 
 .top-header-container {
-	text-align:center;
 	height:20%;
 	width:100%;
 	position:relative;
@@ -141,10 +146,6 @@ h4.info {
 #app-layout-header {
 	height: 95.6px;
 	background-color:#EDEDED;
-}
-
-.header-link {
-	font-size:20px;
 }
 
 #login-body {
@@ -274,6 +275,9 @@ h4.info {
 	width:100%;
 	position:relative;
 	top:0;
+}
+
+.text-align-center {
 	text-align:center;
 }
 
@@ -343,4 +347,47 @@ h4.info {
 	position:relative;
 	top:2px;
 	margin-left:7px;
+}
+
+.header-center {
+	position:relative;
+	display:inline-block;
+	height:100%;
+	width:40%;
+	left:30%;
+	text-align:center;
+}
+
+.select-right {
+	position:relative;
+	display:inline-block;
+	float:right;
+	height:100%;
+	padding:45px;
+}
+
+.select-left {
+	display:inline-block;
+	height:100%;
+	width:20%;
+	float:left;
+	position:relative;
+	padding-left:45px;
+}
+
+.header-link {
+	position:relative;
+	text-align:center;
+	height:100%;
+	width:20%;
+}
+
+.vertical-align-center {
+	position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#new-season {
+	
 }

@@ -16,48 +16,184 @@ use App\Performance;
 use App\Event;
 use App\Split;
 use App\Relay;
+use App\RosterSpot;
+use App\Season;
 
 class CoachController extends Controller
 {
-    public function showManageTeam() {
-        return view('coach/manage-team');
+    public function editAthlete(Request $request, Athlete $athlete) {
+        $athlete->level = $request->level;
+        $athlete->events = $request->events;
+        $athlete->save();
+
+        return view('coach.manage-team', ['tab' => 1, 'successful' => True, 'athlete' => $athlete]);
+    }
+
+    public function showEditAthlete(Athlete $athlete) {
+        return view('coach/manage-team', ['tab' => 1, 'athlete' => $athlete]);
+    }
+
+    public function nsAddAthlete(Request $request) {
+
+        $this->validate($request, [
+            'grad_year' => 'regex:/(\d){4}/'
+        ]);
+
+        $user = new User;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->coach_or_athlete = 0;
+        $user->gender = $request->gender;
+        $user->save();
+
+        $athlete = new Athlete;
+        $athlete->user_id = $user->id;
+        $athlete->team_id = $request->team_id;
+        $athlete->grad_year = $request->grad_year;
+        $athlete->level = $request->level;
+        $athlete->events = $request->events;
+        $athlete->save();
+
+        $new_roster = session('new-roster');
+        array_push($new_roster, $athlete->id);
+        $request->session()->put('new-roster', $new_roster);
+
+        return view('coach/new-season-roster', ['tab' => 0]);
+    }
+
+    public function nsShowAddAthlete(Request $request) {
+        $old_roster = is_null($request->old) ? array() : $request->old;
+        $request->session()->put('old-roster', $old_roster);
+
+        $new_roster = is_null($request->new) ? array() : $request->new;
+        $request->session()->put('new-roster', $new_roster);
+
+        return view('coach/add-athlete', ['tab' => 0, 'route' => 'ns-athlete-submit', 'back_route' => 'new-season-roster']);
+    }
+
+    public function submitNewRoster(Request $request) {
+        $athlete_list = $request->new;
+        $season_id = $request->session()->get('ns_id');
+        for ($i = 0; $i < count($athlete_list); $i++) {
+            $spot = new RosterSpot;
+            $spot->athlete_id = $athlete_list[$i];
+            $spot->season_id = $season_id;
+            $spot->save();
+        }
+
+        $team = Team::find($request->team_id);
+
+        if ($request->session()->pull('set-current', null)) {
+            $team->setSeasonCurrent($season_id);
+            $request->session()->put('season', $season_id);
+        }
+
+        $request->session()->forget('ns_id');
+        $request->session()->forget('new-roster');
+        $request->session()->forget('old-roster');
+        $request->session()->forget('set-current');
+
+        return view('coach/home', ['tab' => 0]);
+    }
+
+    public function showNewSeasonRoster() {
+        return view('coach/new-season-roster', ['tab' => 0]);
+    }
+
+    public function newSeason(Request $request) {
+        $this->validate($request, [
+            'year' => 'regex:/(\d){4}/'
+        ]);
+
+        $season = new Season;
+        $season->team_id = $request->team_id;
+        $season->year = $request->year;
+        $season->name = $request->name;
+        $season->current = 0;
+        $season->save();
+
+        $request->session()->put('set-current', strcmp($request->current, 'on') == 0 ? 1 : 0);
+        $request->session()->put('ns_id', $season->id);
+        return redirect()->route('new-season-roster');
+    }
+
+    public function showNewSeason() {
+        return view('coach/new-season', ['tab' => 0]);
+    }
+
+    public function addAthlete(Request $request) {
+        $this->validate($request, [
+            'grad_year' => 'regex:/(\d){4}/'
+        ]);
+
+        $user = new User;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->coach_or_athlete = 0;
+        $user->gender = $request->gender;
+        $user->save();
+
+        $athlete = new Athlete;
+        $athlete->user_id = $user->id;
+        $athlete->team_id = $request->team_id;
+        $athlete->grad_year = $request->grad_year;
+        $athlete->level = $request->level;
+        $athlete->events = $request->events;
+        $athlete->save();
+
+        $spot = new RosterSpot;
+        $spot->athlete_id = $athlete->id;
+        $spot->season_id = session('season');
+        $spot->save();
+
+        return view('coach/add-athlete', ['tab' => 1, 'route' => 'add-athlete', 'back_route' => 'coach-roster', 'successful' => True]);
+    }
+
+    public function showAddAthlete() {
+        return view('coach/add-athlete', ['tab' => 1, 'route' => 'add-athlete', 'back_route' => 'coach-roster']);
+    }
+
+    public function showManageTeam($set_current = null) {
+        if (!is_null($set_current)) Team::find(Auth::user()->getTeamID())->setSeasonCurrent($set_current);
+        return view('coach/manage-team', ['tab' => 1]);
     }
 
     public function showSplits(Athlete $athlete, Performance $performance) {
-        return view('coach/splits', ['athlete' => $athlete, 'performance' => $performance]);
+        return view('coach/splits', ['tab' => 3, 'athlete' => $athlete, 'performance' => $performance]);
     }
 
     public function deleteResultRelay(ScheduleEvent $meet, Relay $relay) {
         $relay->delete();
-        return view('coach/view-meet', ['meet' => $meet]);
+        return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function deleteResultIndividual(ScheduleEvent $meet, Performance $performance) {
         $performance->delete();
-        return view('coach/view-meet', ['meet' => $meet]);
+        return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function deleteAnnouncement(Announcement $announcement) {
         $announcement->delete();
-        return view('coach/announcements');
+        return view('coach/announcements', ['tab' => 4]);
     }
 
     public function showViewMeet(ScheduleEvent $meet) {
-        return view('coach/view-meet', ['meet' => $meet]);
+        return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function showTeamBests(Event $event, $include_relays = False) {
-        return view('coach/results', ['event' => $event, 'include_relays' => $include_relays]);
+        return view('coach/results', ['tab' => 3, 'event' => $event, 'include_relays' => $include_relays]);
     }
 
-    public function showResults() {
-        return view('coach/results', ['event' => null]);
+    public function showResults($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+        return view('coach/results', ['tab' => 3, 'event' => null]);
     }
 
     public function changeEvent(Request $request) {
         if (isset($request->delete)) {
             ScheduleEvent::find($request->entry_id)->delete();
-            return view('coach/schedule');
+            return view('coach/schedule', ['tab' => 2]);
         }
 
         $schedule_event = ScheduleEvent::find($request->entry_id);
@@ -70,7 +206,7 @@ class CoachController extends Controller
             DB::delete("delete from performance where performance.team_id = ? and performance.meet_id = ?", [$request->team_id, $request->entry_id]);
         }
         $schedule_event->save();
-        return view('coach/schedule');
+        return view('coach/schedule', ['tab' => 2]);
     }
 
     public function addResultsIndividual(Request $request, ScheduleEvent $meet) {
@@ -121,14 +257,14 @@ class CoachController extends Controller
             }
         }
 
-        return view('coach/add-results-individual', ['successful' => 1, 'meet' => $meet]);
+        return view('coach/add-results-individual', ['tab' => 2, 'successful' => 1, 'meet' => $meet]);
     }
 
     public function showAddResultsIndividual(ScheduleEvent $meet) {
-        return view('coach/add-results-individual', ['successful' => 0, 'meet' => $meet]);
+        return view('coach/add-results-individual', ['tab' => 2, 'successful' => 0, 'meet' => $meet]);
     }
 
-    public function addResultsRelay(Request $request, ScheduleEvent $meet) {
+    public function addResultsRelay(Request $request, ScheduleEvent $meet, $gender) {
         $legs = Event::getRelayLegs($request->event);
 
         Validator::make($request->all(), [
@@ -192,32 +328,36 @@ class CoachController extends Controller
 
         $relay->save();
 
-        return view('coach/add-results-relay', ['successful' => 1, 'gender' => $gender, 'meet' => $meet, 'relay' => null]);
+        return view('coach/add-results-relay', ['tab' => 2, 'successful' => 1, 'gender' => $gender, 'meet' => $meet, 'relay' => null]);
     }
 
     public function showAddResultsRelay(ScheduleEvent $meet, $relay = null, $gender = 1) {
         if ($relay == 0) $relay = null;
-        return view('coach/add-results-relay', ['successful' => 0, 'gender' => $gender, 'meet' => $meet, 'relay' => Event::find($relay)]);
+        return view('coach/add-results-relay', ['tab' => 2, 'successful' => 0, 'gender' => $gender, 'meet' => $meet, 'relay' => Event::find($relay)]);
     }
 
     public function addAnnouncement(Request $request) {
+        $this->validate($request, [
+            'text' => 'required'
+        ]);
         $announcement = new Announcement;
 
         $announcement->team_id = $request->team_id;
         $announcement->coach_id = $request->coach_id;
+        $announcement->season_id = $request->session()->get('season');
         $announcement->text = $request->text;
 
         $announcement->save();
 
-        return view('coach/add-announcement', ['successful' => 1]);
+        return view('coach/add-announcement', ['tab' => 4, 'successful' => 1]);
     }
 
     public function showAddAnnouncement() {
-        return view('coach/add-announcement', ['successful' => 0]);
+        return view('coach/add-announcement', ['tab' => 4, 'successful' => 0]);
     }
 
     public function showAnnouncements() {
-        return view('coach/announcements');
+        return view('coach/announcements', ['tab' => 4]);
     }
 
     public function addScheduleEvent(Request $request) {
@@ -230,30 +370,34 @@ class CoachController extends Controller
         $schedule_event->location = $request->location;
         $schedule_event->date = date_format(date_create($request->date), 'Y-m-d H:i:s');
         $schedule_event->importance = $request->importance;
-        $schedule_event->team_id = $request->team_id;
+        $schedule_event->team_id = Auth::user()->getTeamID();
+        $schedule_event->season_id = $request->session()->get('season');
         $schedule_event->save();
 
-        return view('coach/add-schedule-event', ['successful' => 1]);
+        return view('coach/add-schedule-event', ['tab' => 2, 'successful' => 1]);
     }
 
     public function showAddScheduleEvent() {
-        return view('coach/add-schedule-event', ['successful' => 0]);
+        return view('coach/add-schedule-event', ['tab' => 2, 'successful' => 0]);
     }
 
-	public function showSchedule() {
-		return view('coach/schedule');
+	public function showSchedule($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+		return view('coach/schedule', ['tab' => 2]);
 	}
 
-	public function showHome() {
-		return view('coach/home');
+	public function showHome($season = null) {    
+        if (!is_null($season)) session(['season' => $season]);
+		return view('coach/home', ['tab' => 0]);
 	}
 
-    public function showRoster() {
-    	return view('coach/roster');
+    public function showRoster($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+    	return view('coach/roster', ['tab' => 1]);
     }
 
     public function showViewAthlete(Athlete $athlete) {
-    	return view('coach/view-athlete', ['athlete' => $athlete]);
+    	return view('coach/view-athlete', ['tab' => 1, 'athlete' => $athlete]);
     }
 
     public function timeRegex($event_type) {

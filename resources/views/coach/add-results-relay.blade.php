@@ -3,12 +3,14 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Add Results for {{ $meet->name }}</h2>
+		<div class="header-center">
+            <h2 class="top-header">Add Results for {{ $meet->name }}</h2>
+        </div>
 	</div>
 
 	<div class="content-container-lg">
 		<div class="form-container">
-            <form method="post" id="form" action="/coach/add-results/relay/{{ $meet->id }}">
+            <form method="post" id="form">
                 {{ csrf_field() }}
                 <input name="team_id" type="hidden" value="{{ $team->id }}">
                 <div class="form-inline event">
@@ -148,8 +150,6 @@
                         <input id="place" type="number" class="form-control" name="place" style="width:30%">
                     </div>
                 </div>
-
-            
 
             </form>
             <div class="container">

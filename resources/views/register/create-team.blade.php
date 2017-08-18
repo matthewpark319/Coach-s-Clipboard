@@ -47,6 +47,29 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="season_name" class="col-md-4 control-label">Current Season</label>
+
+                            <div class="col-md-6">
+                                <select id="season_name" class="form-control" name="season_name" required>
+                                    <option value="">-- Select Season --</option>
+                                    <option value="Cross Country">Cross Country</option>
+                                    <option value="Indoor Track">Indoor Track</option>
+                                    <option value="Outdoor Track">Outdoor Track</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="season_year" class="col-md-4 control-label">Year of Season</label>
+
+                            <div class="col-md-6">
+                                <input id="season_year" type="text" class="form-control" name="season_year" placeholder="Enter in yyyy format" required>
+
+                            </div>
+                        </div>
+
+
 
                         @if (count($errors) > 0)
                         <div class="form-group">

@@ -4,11 +4,22 @@
 
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Results</h2>
+		<div class="header-center">
+			<h2 class="top-header">Results</h2>
+		</div>
+
+		<div class="select-right">
+			<select id="season" onchange="changeSeason('results')">
+				<option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+				@foreach ($team->seasonsNotSelected() as $season) 
+					<option value="{{ $season->id }}">{{ $season->info }}</option>
+				@endforeach
+			</select>
+		</div>
 	</div>
 
 	<div class="half-page">
-		<div class="half-header-container">
+		<div class="half-header-container text-align-center">
 			<h3 class="top-header">Team Bests</h3>
 		</div>
 
@@ -70,17 +81,23 @@
 	</div>
 
 	<div class="half-page">
-		<div class="half-header-container">
+		<div class="half-header-container text-align-center">
 			<h3 class="top-header">Meet Results</h3>
 		</div>
 
 		<div class="half-content">
 			<div class="list-container-scroll">
-				<ul class="list-group">
-					@foreach($team->scheduleComplete() as $s) 
-						<a href="{{ route('coach-view-meet', ['meet' => $s->id]) }}" class="list-group-item">{{ $s->name }}</a>
-					@endforeach
-				</ul>
+				@php $schedule = $team->scheduleComplete() @endphp
+
+				@if (count($schedule) > 0)
+					<ul class="list-group">
+						@foreach($team->scheduleComplete() as $s) 
+							<a href="{{ route('coach-view-meet', ['meet' => $s->id]) }}" class="list-group-item">{{ $s->name }}</a>
+						@endforeach
+					</ul>
+				@else 
+					<h4 style="text-align:center">-- No meets --</h4>
+				@endif
 			</div>
 			
 		</div>

@@ -35,13 +35,13 @@
         
         <div class="header-container">
             <div class="vertical-center">
-                <a class="header-link" href="{{ route('login') }}">
+                <a class="header-link" style="font-size:20px" href="{{ route('login') }}">
                     Login
                 </a>
             </div>
 
             <div class="vertical-center">
-                <a class="header-link" href="{{ route('register') }}">
+                <a class="header-link" style="font-size:20px" href="{{ route('register') }}">
                     Register
                 </a>
             </div>

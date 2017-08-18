@@ -3,7 +3,18 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Schedule</h2>
+		<div class="header-center">
+            <h2 class="top-header">Schedule</h2>
+        </div>
+
+        <div class="select-right">
+            <select id="season" onchange="changeSeason('schedule')">
+                <option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+                @foreach ($team->seasonsNotSelected() as $season) 
+                    <option value="{{ $season->id }}">{{ $season->info }}</option>
+                @endforeach
+            </select>
+        </div>
 	</div>
 
 	<div class="content-container-lg">
@@ -64,16 +75,19 @@
 		
 	</div>
 
+    @if (session('season') == $team->currentSeason()->id)
 	<div class="footer">
 		<a class="add-button" href="{{ route('add-schedule-event') }}">
 			<button class="btn btn-default btn-bottom-right">Add New Event</button>
 		</a>
 	</div>
+    @endif
 </div>
 
 {{ csrf_field() }}
 <script>
 function uncompleteEvent(entry_id) {
+	console.log('hello2');
     if (confirm("Uncompleting this event will delete all of its results. Continue?")) {
         var form = document.createElement("form");
         form.setAttribute("method", "post");
@@ -94,13 +108,13 @@ function uncompleteEvent(entry_id) {
         csrf_field.setAttribute("type", "hidden");
         csrf_field.setAttribute("name", "_token");
         csrf_field.setAttribute("value", $("input[name=_token]").val());
-        form.append(csrf_field);
+        form.appendChild(csrf_field);
 
         var team_id = document.createElement("input");
         team_id.setAttribute("type", "hidden");
         team_id.setAttribute("name", "team_id");
         team_id.setAttribute("value", {{ $team->id }});
-        form.append(team_id);
+        form.appendChild(team_id);
 
         document.body.appendChild(form);
         form.submit();
@@ -108,6 +122,7 @@ function uncompleteEvent(entry_id) {
 }
 
 function completeEvent(entry_id) {
+	console.log('hello');
     var form = document.createElement("form");
     form.setAttribute("method", "post");
 
@@ -127,7 +142,7 @@ function completeEvent(entry_id) {
     csrf_field.setAttribute("type", "hidden");
     csrf_field.setAttribute("name", "_token");
     csrf_field.setAttribute("value", $("input[name=_token]").val());
-    form.append(csrf_field);
+    form.appendChild(csrf_field);
         
     document.body.appendChild(form);
     form.submit();
@@ -154,7 +169,7 @@ function removeEntry(entry_id) {
         csrf_field.setAttribute("type", "hidden");
         csrf_field.setAttribute("name", "_token");
         csrf_field.setAttribute("value", $("input[name=_token]").val());
-        form.append(csrf_field);
+        form.appendChild(csrf_field);
             
         document.body.appendChild(form);
         form.submit();

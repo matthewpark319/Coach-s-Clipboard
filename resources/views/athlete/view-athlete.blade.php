@@ -3,7 +3,9 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Athlete Profile: {{ $teammate->name() }}</h2>
+		<div class="header-center">
+            <h2 class="top-header">Athlete Profile: {{ $teammate->name() }}</h2>
+        </div>
 	</div>
 
 	<div class="content-container-lg">
@@ -13,18 +15,23 @@
 			<h4 class="info">Performances: </h4>
 			<div class="list-container">
 				<ul class="list-group">
-					@foreach ($teammate->performances() as $p)
-						
-						@if (is_null($p->id)) @break @endif
-						@php $performance = \App\Performance::find($p->id); @endphp
+					@foreach ($team->allSeasons() as $s)
+						@php $performances = $teammate->performances($s->id) @endphp
+						@if (count($performances) > 0)
+							<h5>{{ $s->name . ' ' . $s->year }}</h5>
+							@foreach ($performances as $p)
 
-					
-						<li class="list-group-item">{{ $performance->getRaceResult() . ' - ' . $performance->getRaceInfo() }}	
-						
-						@if ($p->has_splits == 1)
-							<a href="{{ route('athlete-splits', ['performance' => $p->id]) }}" class='float-right'>See Splits</a>
+								<!-- @if (is_null($p->id)) @break @endif -->
+								@php $performance = \App\Performance::find($p->id); @endphp
+
+								<li class="list-group-item">{{ $performance->getRaceResult() . ' - ' . $performance->getRaceInfo() }}	
+									@if ($p->has_splits == 1)
+										<a href="{{ route('athlete-splits', ['performance' => $p->id]) }}" class='float-right'>See Splits</a>
+									@endif
+								</li>
+
+							@endforeach
 						@endif
-						</li>
 					@endforeach
 				</ul>
 			</div>

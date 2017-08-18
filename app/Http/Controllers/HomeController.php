@@ -32,9 +32,25 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->coach_or_athlete)
+        if ($user->coach_or_athlete) {
+            $coach = Coach::where('user_id', $user->id)->first();
+            if ($coach->asst_coach_of == null) $team = Team::find($coach->head_coach_of);
+            else $team = Team::find($coach->asst_coach_of);
+
+            $season = $team->currentSeason();
+
+            session(['season' => $season->id]);
+            session(['xc' => strcmp($season->name, 'Cross Country') == 0]);
             return redirect()->route('coach-home');
-        else 
+        } else {
+            $athlete = Athlete::where('user_id', $user->id)->first();
+            $team = Team::find($athlete->team_id);
+
+            $season = $team->currentSeason();
+
+            session(['season' => $team->id]);
+            session(['xc' => strcmp($season->name, 'Cross Country') == 0]);
             return redirect()->route('athlete-home');   
+        }
     }
 }

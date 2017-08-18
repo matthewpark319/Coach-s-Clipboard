@@ -9,8 +9,10 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <h2>Account Created Successfully</h2>
-                        <h3>{{ session('message') }}</h3>
-                        <h3>{{ session('password') }}</h3>
+                        <h3>{{ $message }}</h3>
+                        @if (isset($team_password))
+                            <h3>{{ $team_password }}</h3>
+                        @endif
                     </div>
 
                     <div class="form-group">

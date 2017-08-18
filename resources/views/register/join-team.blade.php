@@ -17,16 +17,20 @@
                             </div>
                         </div>    
 
-                        @if (!session()->has('athlete-events')) 
                         <div class="form-group">
+                        @if (session('coach_or_athlete')) 
                             <label for="password" class="col-md-4 control-label">Enter Team Password</label>
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control" name="password" required>
                             </div>
-                        </div>
+                        @else 
+                            <label for="grad_year" class="col-md-4 control-label">Class of:</label>
+                            <div class="col-md-6">
+                                <input id="grad_year" type="grad_year" class="form-control" name="grad_year" required>
+                            </div>        
                         @endif
+                        </div>
 
-                        
                         <div class="form-group">
                             @if (count($errors) > 0)
                                 @foreach($errors->all() as $e)
@@ -37,8 +41,6 @@
                                 <li class="error-margin-left">Incorrect password</li>
                             @endif
                         </div>
-	                    
-
 	                    
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">

@@ -43,18 +43,17 @@
 
         <script>
             $(document).ready(function(){
-                var view = "{{ $view }}";
-                if (view.localeCompare("coach.home") == 0)
-                    $('#home').attr('class', 'active');
-                else if (view.localeCompare('coach.roster') == 0 || view.localeCompare('coach.view-athlete') == 0)
-                    $('#roster').attr('class', 'active'); 
-                else if (view.localeCompare('coach.schedule') == 0 || view.localeCompare('coach.add-results-individual') == 0 || view.localeCompare('coach.add-results-relay') == 0 || view.localeCompare('coach.add-schedule-event') == 0)
-                    $('#schedule').attr('class', 'active');
-                else if (view.localeCompare('coach.announcements') == 0 || view.localeCompare('coach.add-announcement') == 0)
-                    $('#announcements').attr('class', 'active');
-                else if (view.localeCompare('coach.results') == 0 || view.localeCompare('coach.view-meet') == 0 || view.localeCompare('coach.splits') == 0)
-                    $('#results').attr('class', 'active');
+                if ({{ $tab }} == 0) $('#home').attr('class', 'active');
+                else if ({{ $tab }} == 1) $('#roster').attr('class', 'active'); 
+                else if ({{ $tab }} == 2) $('#schedule').attr('class', 'active');
+                else if ({{ $tab }} == 3) $('#results').attr('class', 'active');
+                else if ({{ $tab }} == 4) $('#announcements').attr('class', 'active'); 
             });   
+
+            function changeSeason(route) {
+                var season = $('#season option:selected').val();
+                window.location.href = "/coach/" + route + "/" + season;
+            }
         </script>
     </body>
 </html>

@@ -17,42 +17,45 @@ class AthleteController extends Controller
 {
     //
     public function showSplits(Performance $performance) {
-        return view('athlete/splits', ['performance' => $performance]);
+        return view('athlete/splits', ['tab' => 4, 'performance' => $performance]);
     }
 
-    public function showTeamBests(Event $event) {
-        return view('athlete/results', ['event' => $event]);
+    public function showTeamBests(Event $event, $include_relays = False) {
+        return view('athlete/results', ['tab' => 4, 'event' => $event, 'include_relays' => $include_relays]);
     }
 
-    public function showResults() {
-        return view('athlete/results', ['event' => null]);
+    public function showResults($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+        return view('athlete/results', ['tab' => 4, 'event' => null]);
     }
 
     public function showViewMeet(ScheduleEvent $meet) {
-        return view('athlete/view-meet', ['meet' => $meet]);
+        return view('athlete/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function showViewAthlete(Athlete $teammate) {
-        return view('athlete/view-athlete', ['teammate' => $teammate]);
+        return view('athlete/view-athlete', ['tab' => 2, 'teammate' => $teammate]);
     }
 
     public function showMyProfile() {
-        return view('athlete/myprofile');
+        return view('athlete/myprofile', ['tab' => 1]);
     }
 
-    public function showSchedule() {
-        return view('athlete/schedule');
+    public function showSchedule($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+        return view('athlete/schedule', ['tab' => 3]);
     }
 
-    public function showHome() {
-    	return view('athlete/home');
+    public function showHome($season = null) {
+        if (!is_null($season)) session(['season' => $season]);
+    	return view('athlete/home', ['tab' => 0]);
     }
 
     public function showRoster() {
-        return view('athlete/roster');
+        return view('athlete/roster', ['tab' => 2]);
     }
 
     public function showAnnouncements() {
-        return view('athlete/announcements');
+        return view('athlete/announcements', ['tab' => 5]);
     }
 }

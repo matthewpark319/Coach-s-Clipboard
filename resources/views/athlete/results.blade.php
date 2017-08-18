@@ -4,12 +4,25 @@
 
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Results</h2>
+		<div class="header-center">
+			<h2 class="top-header">Results</h2>
+		</div>
+
+		<div class="select-right">
+			<select id="season" onchange="changeSeason('results')">
+				<option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+				@foreach ($team->seasonsNotSelected() as $season) 
+					<option value="{{ $season->id }}">{{ $season->info }}</option>
+				@endforeach
+			</select>
+		</div>
 	</div>
 
 	<div class="half-page">
 		<div class="half-header-container">
-			<h3 class="top-header">Team Bests</h3>
+			<div class="header-center">
+				<h3 class="top-header">Team Bests</h3>
+			</div>
 		</div>
 
 		<div class="half-content">
@@ -23,15 +36,18 @@
                         @endforeach
 					</select>
 				</div>
+
+				<p class="inline-block" for="include_relays" style="margin-top:7px">Include Relay Splits</p>
+				<input id="include_relays" type="checkbox">
 			</div>
 			@if (isset($event))
 				<div class="list-container" style="margin-top:30px">
 					<h4>Boys</h4>
-					@if (count($team->teamBests($event->id, 1)) == 0)
+					@if (count($team->teamBests($event->id, 1, $include_relays)) == 0)
 						<h5>No Results</h5>
 					@else
 						<ul class="list-group">
-						@foreach ($team->teamBests($event->id, 1) as $p)
+						@foreach ($team->teamBests($event->id, 1, $include_relays) as $p)
 							<li class="list-group-item">{{ $p->result }}</li>
 						@endforeach
 						</ul>
@@ -40,12 +56,12 @@
 
 				<div class="list-container" style="margin-top:30px">
 					<h4>Girls</h4>
-					@if (count($team->teamBests($event->id, 0)) == 0)
+					@if (count($team->teamBests($event->id, 0, $include_relays)) == 0)
 						<h5>No Results</h5>
 					@else
 						<ul class="list-group">
-						@foreach ($team->teamBests($event->id, 0) as $p)
-							<li class="list-group-item">{{ $p->result . ' - ' . $p->athlete_name}}</li>
+						@foreach ($team->teamBests($event->id, 0, $include_relays) as $p)
+							<li class="list-group-item">{{ $p->result }}</li>
 						@endforeach
 						</ul>
 					@endif
@@ -68,7 +84,9 @@
 
 	<div class="half-page">
 		<div class="half-header-container">
-			<h3 class="top-header">Meet Results</h3>
+			<div class="header-center">
+				<h2 class="top-header">Meet Results</h2>
+			</div>
 		</div>
 
 		<div class="half-content">
@@ -85,9 +103,27 @@
 </div>
 
 <script>
-
 function showTeamBests() {
-	window.location.href = "/athlete/results/team-bests/" + $("#event option:selected").val();
+	if ($('#event').val()) {
+		@if (isset($include_relays))
+			window.location.href = "/athlete/results/team-bests/" + $("#event option:selected").val() + "/{{ $include_relays }}";
+		@else
+			window.location.href = "/athlete/results/team-bests/" + $("#event option:selected").val() + "/";
+		@endif
+	} else {
+		window.location.href = "{{ route('athlete-results') }}"; 
+	}
 }
+
+@if (isset($event))
+$('#include_relays').change(function() {
+	window.location.href = "{{ route('athlete-team-bests', ['event' => $event, 'include_relays' => !$include_relays ]) }}";
+});
+	@if ($include_relays)
+	$(document).ready(function(){
+		$('#include_relays').attr('checked', 'checked');
+	});
+	@endif
+@endif
 </script>
 @endsection

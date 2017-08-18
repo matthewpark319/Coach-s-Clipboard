@@ -26,4 +26,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function getTeamID() {
+        if ($this->coach_or_athlete) {
+            $coach = \App\Coach::where('user_id', $this->id)->first();
+
+            if ($coach->asst_coach_of == null) return $coach->head_coach_of;
+            return $coach->asst_coach_of;
+        } else {
+            $athlete = \App\Athlete::where('user_id', $this->id)->first();
+            return $athlete->team_id;
+        }
+    }
 }

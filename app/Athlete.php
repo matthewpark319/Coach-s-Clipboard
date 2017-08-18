@@ -15,17 +15,18 @@ class Athlete extends Model
     	return $user->first_name . ' ' . $user->last_name;
     }
 
-    public function performances() {
-        return DB::select("select p.id, p.has_splits from athlete a left join performance p on a.id = p.athlete_id
+    public function performances($season_id = null) {
+        if (!is_null($season_id)) {
+            return DB::select("select n.current, p.id, p.has_splits, s.season_id from athlete a left join performance p on a.id = p.athlete_id
+                left join schedule_event s on p.meet_id = s.id
+                left join season n on n.id = s.season_id
+                where a.id = ?
+                and s.season_id = ?
+                order by n.current desc, s.season_id, s.date", [$this->id, $season_id]);
+        } return DB::select("select n.current, p.id, p.has_splits, s.season_id from athlete a left join performance p on a.id = p.athlete_id
             left join schedule_event s on p.meet_id = s.id
+            left join season n on n.id = s.season_id
             where a.id = ?
-            order by s.date", [$this->id]);
-    	// return DB::select("select p.id, p.result, p.relay_leg, p.has_splits, e.name as event, e.type as event_type, s.name as meet, e2.name as relay_name
-     //        from performance p left join athlete a on p.athlete_id = a.id
-     //        left join schedule_event s on p.meet_id = s.id
-     //        left join event e on p.event_id = e.id
-     //        left join relay r on (r.first_leg = p.id or r.second_leg = p.id or r.third_leg = p.id or r.fourth_leg = p.id)
-     //        left join event e2 on r.event_id = e2.id
-     //        where p.athlete_id = ?", [$this->id]);
+            order by n.current desc, s.season_id, s.date", [$this->id]);
     }
 }

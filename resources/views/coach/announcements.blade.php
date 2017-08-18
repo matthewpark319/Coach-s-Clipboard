@@ -3,7 +3,10 @@
 @section('content')
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Announcements</h2>
+		<div class="header-center">
+            <h2 class="top-header">Announcements</h2>
+        </div>
+        
 	</div>
 
     {{ csrf_field() }}

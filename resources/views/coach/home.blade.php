@@ -4,7 +4,22 @@
 
 <div class="main">
 	<div class="top-header-container">
-		<h2 class="top-header">Team: {{ $team->school . " " . $team->name }}</h2>
+		<div class="select-left">
+			<a id="new-season" class='btn btn-default vertical-align-center' href="{{ route('new-season') }}">Start New Season</a>
+		</div>
+
+		<div class="header-center" style="left:10%">
+			<h2 class="top-header">{{ $team->school . " " . $team->name }}</h2>
+		</div>
+		
+		<div class="select-right">
+			<select id="season" onchange="changeSeason('home')">
+				<option value="{{ $team->selectedSeason()->id }}">{{ $team->selectedSeason()->info }}</option>
+				@foreach ($team->seasonsNotSelected() as $season) 
+					<option value="{{ $season->id }}">{{ $season->info }}</option>
+				@endforeach
+			</select>
+		</div>
 	</div>
 
 	<div class="home-section-container">
