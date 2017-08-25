@@ -12,6 +12,8 @@ use App\Announcement;
 use App\ScheduleEvent;
 use App\Event;
 use App\Performance;
+use App\Season;
+use App\Course;
 
 class AthleteController extends Controller
 {
@@ -24,13 +26,27 @@ class AthleteController extends Controller
         return view('athlete/results', ['tab' => 4, 'event' => $event, 'include_relays' => $include_relays]);
     }
 
+    public function showTeamBestsXC(Event $event, Course $course = null) {
+        return view('athlete/results-xc', ['tab' => 4, 'event' => $event, 'course' => $course]);
+    }
+
     public function showResults($season = null) {
-        if (!is_null($season)) session(['season' => $season]);
-        return view('athlete/results', ['tab' => 4, 'event' => null]);
+        if (!is_null($season)) {
+            session(['season' => $season]);
+            if (strcmp(Season::find($season)->name, 'Cross Country') == 0) {
+                return view('athlete/results-xc', ['tab' => 4, 'event' => null]);
+            }
+        } elseif (strcmp(Season::find(session('season'))->name, 'Cross Country') == 0) return view('athlete/results-xc', ['tab' => 4, 'event' => null]);
+        
+        return view('athlete/results', ['tab' => 4, 'event' => null]);        
     }
 
     public function showViewMeet(ScheduleEvent $meet) {
         return view('athlete/view-meet', ['tab' => 3, 'meet' => $meet]);
+    }
+
+    public function showViewMeetXC(ScheduleEvent $meet) {
+        return view('athlete/view-meet-xc', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function showViewAthlete(Athlete $teammate) {

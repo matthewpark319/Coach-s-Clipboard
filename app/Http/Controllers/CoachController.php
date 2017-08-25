@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use App\Coach;
 use App\Athlete;
 use App\Team;
@@ -18,6 +19,7 @@ use App\Split;
 use App\Relay;
 use App\RosterSpot;
 use App\Season;
+use App\Course;
 
 class CoachController extends Controller
 {
@@ -72,8 +74,15 @@ class CoachController extends Controller
     }
 
     public function submitNewRoster(Request $request) {
+        $season = new Season;
+        $season->team_id = Auth::user()->getTeamID();
+        $season->year = $request->session()->pull('ns_year');
+        $season->name = $request->session()->pull('ns_name');
+        $season->current = 0;
+        $season->save();
+
         $athlete_list = $request->new;
-        $season_id = $request->session()->get('ns_id');
+        $season_id = $season->id;
         for ($i = 0; $i < count($athlete_list); $i++) {
             $spot = new RosterSpot;
             $spot->athlete_id = $athlete_list[$i];
@@ -83,15 +92,16 @@ class CoachController extends Controller
 
         $team = Team::find($request->team_id);
 
-        if ($request->session()->pull('set-current', null)) {
+        
+
+        if ($request->session()->pull('ns_current', null)) {
             $team->setSeasonCurrent($season_id);
             $request->session()->put('season', $season_id);
         }
 
-        $request->session()->forget('ns_id');
         $request->session()->forget('new-roster');
         $request->session()->forget('old-roster');
-        $request->session()->forget('set-current');
+        $request->session()->forget('ns_current');
 
         return view('coach/home', ['tab' => 0]);
     }
@@ -105,15 +115,10 @@ class CoachController extends Controller
             'year' => 'regex:/(\d){4}/'
         ]);
 
-        $season = new Season;
-        $season->team_id = $request->team_id;
-        $season->year = $request->year;
-        $season->name = $request->name;
-        $season->current = 0;
-        $season->save();
+        $request->session()->put('ns_year', $request->year);
+        $request->session()->put('ns_name', $request->name);
 
-        $request->session()->put('set-current', strcmp($request->current, 'on') == 0 ? 1 : 0);
-        $request->session()->put('ns_id', $season->id);
+        $request->session()->put('ns_current', strcmp($request->current, 'on') == 0 ? 1 : 0);
         return redirect()->route('new-season-roster');
     }
 
@@ -154,7 +159,11 @@ class CoachController extends Controller
     }
 
     public function showManageTeam($set_current = null) {
-        if (!is_null($set_current)) Team::find(Auth::user()->getTeamID())->setSeasonCurrent($set_current);
+        if (!is_null($set_current)) {
+            Team::find(Auth::user()->getTeamID())->setSeasonCurrent($set_current);
+            if (strcmp(Season::find($set_current)->name, 'Cross Country') == 0) session(['xc' => true]);
+            else session(['xc' => false]);
+        }
         return view('coach/manage-team', ['tab' => 1]);
     }
 
@@ -162,14 +171,19 @@ class CoachController extends Controller
         return view('coach/splits', ['tab' => 3, 'athlete' => $athlete, 'performance' => $performance]);
     }
 
+    public function deleteResultIndividual(ScheduleEvent $meet, Performance $performance) {
+        $performance->delete();
+        return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
+    }
+
     public function deleteResultRelay(ScheduleEvent $meet, Relay $relay) {
         $relay->delete();
         return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
-    public function deleteResultIndividual(ScheduleEvent $meet, Performance $performance) {
+    public function deleteResultXC(ScheduleEvent $meet, Performance $performance) {
         $performance->delete();
-        return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
+        return view('coach/view-meet-xc', ['tab' => 3, 'meet' => $meet]);
     }
 
     public function deleteAnnouncement(Announcement $announcement) {
@@ -181,32 +195,40 @@ class CoachController extends Controller
         return view('coach/view-meet', ['tab' => 3, 'meet' => $meet]);
     }
 
+    public function showViewMeetXC(ScheduleEvent $meet) {
+        return view('coach/view-meet-xc', ['tab' => 3, 'meet' => $meet]);
+    }
+
     public function showTeamBests(Event $event, $include_relays = False) {
         return view('coach/results', ['tab' => 3, 'event' => $event, 'include_relays' => $include_relays]);
     }
 
-    public function showResults($season = null) {
-        if (!is_null($season)) session(['season' => $season]);
-        return view('coach/results', ['tab' => 3, 'event' => null]);
+    public function showTeamBestsXC(Event $event, Course $course = null) {
+        return view('coach/results-xc', ['tab' => 3, 'event' => $event, 'course' => $course]);
     }
 
-    public function changeEvent(Request $request) {
-        if (isset($request->delete)) {
-            ScheduleEvent::find($request->entry_id)->delete();
-            return view('coach/schedule', ['tab' => 2]);
-        }
+    public function showResults($season = null) {
+        if (!is_null($season)) {
+            session(['season' => $season]);
+            if (strcmp(Season::find($season)->name, 'Cross Country') == 0) {
+                return view('coach/results-xc', ['tab' => 3, 'event' => null]);
+            }
+        } elseif (strcmp(Season::find(session('season'))->name, 'Cross Country') == 0) return view('coach/results-xc', ['tab' => 3, 'event' => null]);
+        
+        return view('coach/results', ['tab' => 3, 'event' => null]);        
+    }
 
-        $schedule_event = ScheduleEvent::find($request->entry_id);
+    public function showAddResultsIndividual(ScheduleEvent $meet) {
+        return view('coach/add-results-individual', ['tab' => 2, 'successful' => 0, 'meet' => $meet]);
+    }
 
-        if ($request->complete) {
-            $schedule_event->complete = 1;
-        } else {
-            // delete all results for this event
-            $schedule_event->complete = 0;
-            DB::delete("delete from performance where performance.team_id = ? and performance.meet_id = ?", [$request->team_id, $request->entry_id]);
-        }
-        $schedule_event->save();
-        return view('coach/schedule', ['tab' => 2]);
+    public function showAddResultsRelay(ScheduleEvent $meet, $relay = null, $gender = 1) {
+        if ($relay == 0) $relay = null;
+        return view('coach/add-results-relay', ['tab' => 2, 'successful' => 0, 'gender' => $gender, 'meet' => $meet, 'relay' => Event::find($relay)]);
+    }
+
+    public function showAddResultsXC(ScheduleEvent $meet) {
+        return view('coach/add-results-xc', ['tab' => 2, 'successful' => 0, 'meet' => $meet]);
     }
 
     public function addResultsIndividual(Request $request, ScheduleEvent $meet) {
@@ -233,7 +255,7 @@ class CoachController extends Controller
             $performance->athlete_id = $request->athlete[$i];
             $performance->result = $request->result[$i];
             $performance->place = $request->place[$i];
-            $performance->team_id = $request->team_id;
+            $performance->team_id = Auth::user()->getTeamID();
             $performance->meet_id = $meet->id;
             $performance->save();
 
@@ -258,10 +280,6 @@ class CoachController extends Controller
         }
 
         return view('coach/add-results-individual', ['tab' => 2, 'successful' => 1, 'meet' => $meet]);
-    }
-
-    public function showAddResultsIndividual(ScheduleEvent $meet) {
-        return view('coach/add-results-individual', ['tab' => 2, 'successful' => 0, 'meet' => $meet]);
     }
 
     public function addResultsRelay(Request $request, ScheduleEvent $meet, $gender) {
@@ -331,9 +349,26 @@ class CoachController extends Controller
         return view('coach/add-results-relay', ['tab' => 2, 'successful' => 1, 'gender' => $gender, 'meet' => $meet, 'relay' => null]);
     }
 
-    public function showAddResultsRelay(ScheduleEvent $meet, $relay = null, $gender = 1) {
-        if ($relay == 0) $relay = null;
-        return view('coach/add-results-relay', ['tab' => 2, 'successful' => 0, 'gender' => $gender, 'meet' => $meet, 'relay' => Event::find($relay)]);
+    public function addResultsXC(Request $request, ScheduleEvent $meet) {
+        Validator::make($request->all(), [
+            // only XC results, type = 4
+            'result.*' => ['regex:/' . $this->timeRegex(4) . '/'],
+            'athlete.*' => 'distinct',
+            'place.*' => 'nullable|integer|min:1',
+        ])->validate();
+
+        for ($i = 0; $i < sizeof($request->result); $i++) {
+            $performance = new Performance;
+            $performance->event_id = $request->event;
+            $performance->athlete_id = $request->athlete[$i];
+            $performance->result = $request->result[$i];
+            $performance->place = $request->place[$i];
+            $performance->team_id = Auth::user()->getTeamID();
+            $performance->meet_id = $meet->id;
+            $performance->save();
+        }
+
+        return view('coach/add-results-xc', ['tab' => 2, 'successful' => 1, 'meet' => $meet]);
     }
 
     public function addAnnouncement(Request $request) {
@@ -362,29 +397,74 @@ class CoachController extends Controller
 
     public function addScheduleEvent(Request $request) {
         $this->validate($request, [
-            'date' => 'date_format:n/j/Y'
+            'meet_name' => 'required',
+            'course_id' => 'nullable',
+            'location' => 'required',
+            'date' => 'date_format:n/j/Y|required',
+            'importance' => 'required',
         ]);
 
         $schedule_event = new ScheduleEvent;
-        $schedule_event->name = $request->name;
+        $schedule_event->name = $request->meet_name;
         $schedule_event->location = $request->location;
         $schedule_event->date = date_format(date_create($request->date), 'Y-m-d H:i:s');
         $schedule_event->importance = $request->importance;
         $schedule_event->team_id = Auth::user()->getTeamID();
         $schedule_event->season_id = $request->session()->get('season');
+        $schedule_event->xc_course_id = $request->course_id;
         $schedule_event->save();
 
-        return view('coach/add-schedule-event', ['tab' => 2, 'successful' => 1]);
+        return view('coach/add-meet', ['tab' => 2, 'successful' => 1]);
     }
 
     public function showAddScheduleEvent() {
-        return view('coach/add-schedule-event', ['tab' => 2, 'successful' => 0]);
+        return view('coach/add-meet', ['tab' => 2, 'successful' => 0]);
+    }
+
+    public function showAddScheduleEventXC() {
+        return view('coach/add-meet-xc', ['tab' => 2, 'successful' => 0]);
+    }
+
+    public function addCourseXC(Request $request) {
+        $this->validate($request, [
+            'name' => Rule::unique('xc_course')->where(function($query) {
+                $query->where('team_id', Auth::user()->getTeamID());
+            })
+            
+        ]);
+
+        $course = new Course;
+        $course->name = $request->name;
+        $course->team_id = Auth::user()->getTeamID();
+        $course->save();
+
+        return redirect()->route('add-meet-xc');
     }
 
 	public function showSchedule($season = null) {
         if (!is_null($season)) session(['season' => $season]);
 		return view('coach/schedule', ['tab' => 2]);
 	}
+
+    public function deleteScheduleEvent(ScheduleEvent $meet) {
+        $meet->delete();
+        return view('coach/schedule', ['tab' => 2]);
+    }
+
+    public function completeScheduleEvent(ScheduleEvent $meet) {
+        $meet->complete = 1;
+        $meet->save();
+        return view('coach/schedule', ['tab' => 2]);
+    }
+
+    public function uncompleteScheduleEvent(ScheduleEvent $meet) {
+        $meet->complete = 0;
+        $meet->save();
+
+        DB::delete("delete from performance where performance.team_id = ? and performance.meet_id = ?", [Auth::user()->getTeamID(), $meet->id]);
+
+        return view('coach/schedule', ['tab' => 2]);
+    }
 
 	public function showHome($season = null) {    
         if (!is_null($season)) session(['season' => $season]);
@@ -404,9 +484,12 @@ class CoachController extends Controller
         if ($event_type == 0)
             return '((\d:)?(\d))?\d(\.\d{1,2})?';
         elseif ($event_type == 1) 
-            return '\d{1,2}:\d{2}(\.\d{1,2})?';
+            return '\d{1,2}:[0-5]\d(\.\d{1,2})?';
         elseif ($event_type == 2)
             return '\d{1,2}-\d{1,2}(\.\d{1,2})?';
+        // type == 3 events are relays, which have each leg validated individually
+        elseif ($event_type == 4)
+            return '([1-3]\d|[5-9]):([0-5]\d)';
     }
 
     public function ordinal($i) {

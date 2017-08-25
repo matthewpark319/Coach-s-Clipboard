@@ -21,7 +21,7 @@
         <div class="half-header-container">
             @if (session('season') == $team->currentSeason()->id)
                 <div class="header-link float-left" style="left:10%">
-                    <a href="{{ route('manage-team') }}" class="btn-default btn vertical-align-center">Manage</a>
+                    <a href="{{ route('manage-team') }}" class="btn-default btn vertical-align-center">Manage Team</a>
                 </div>
             
                 <div class="header-center" style="left:10%">
@@ -35,7 +35,7 @@
                 <div class="header-center" style="left:30%">
                     <h3 class="top-header" style="top:20%">Roster</h3>
                 </div>
-                <h5 class="margin-left">--> Choose current season to manage roster</h5>
+                <h5 class="margin-left" style="text-align:center">Choose current season to manage roster</h5>
             @endif
         </div>
         <div class="half-content">
@@ -48,7 +48,7 @@
                         <thead>
                             <th>Name</th>
                             <th>Username</th>
-                            <th>Class</th>
+                            <th>Class Of</th>
                         </thead>
                         <tbody>
                             @foreach ($team->roster() as $athlete)                               
@@ -91,6 +91,7 @@
                 <h4 class="info">Assistant Coach: {{ $c->name }}</h4>
             @endforeach
             <h4 class="info">Team ID: {{ $team->id }}</h4>
+            <h4 class="info">Team Password: {{ $team->password }}</h4>
         </div>
         
     </div>

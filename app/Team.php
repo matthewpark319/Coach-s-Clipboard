@@ -12,21 +12,28 @@ class Team extends Model
     //
     protected $table = 'team';
 
-    public function returningAthletes($season_id, $last_season) {
-        $season = \App\Season::find($season_id);
-        $xc = strcmp($season->name, 'Cross Country') == 0;
+    public function courses() {
+        return DB::select("select * from xc_course where team_id = ?", [$this->id]);
+    }
+
+    public function returningAthletes($year, $season_name, $last_season) {
+        $xc = strcmp($season_name, 'Cross Country') == 0;
         return DB::select("select a.id, grad_year, concat(u.first_name, ' ', u.last_name) as name
             from athlete a left join users u on a.user_id = u.id
             inner join roster_spot rs on rs.athlete_id = a.id
             where a.team_id = ? and rs.season_id = ?
             and grad_year >= if(?, ? + 1, ?)
-            order by u.first_name, u.last_name", [$this->id, $last_season, $xc, $season->year, $season->year]);
+            order by u.first_name, u.last_name", [$this->id, $last_season, $xc, $year, $year]);
     }
 
     public function setSeasonCurrent($season_id) {
         DB::table('season')->where('team_id', $this->id)->update(['current' => 0]);
         DB::update('update season set current = 1 where team_id = ? and id = ?', [$this->id, $season_id]);
+        
         session(['season' => $season_id]);
+
+        $currentSeason = DB::table('season')->where('id', $season_id)->first();
+        session(['xc' => strcmp($currentSeason->name, 'Cross Country') == 0]);
     }
 
     public function allSeasons() {
@@ -114,9 +121,41 @@ class Team extends Model
             order by date desc limit 3", [$this->id, session('season')]);
     }
 
+    public function teamBestsXC($event_id, $gender, $course_id = null) {
+        $season_id = session('season');
+
+        if (is_null($course_id)) {            
+            return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result
+                from performance p left join athlete a on p.athlete_id = a.id
+                left join schedule_event s on p.meet_id = s.id
+                left join users u on a.user_id = u.id
+                inner join roster_spot rs on rs.athlete_id = a.id
+                where p.event_id = ? and p.team_id = ?
+                and u.gender = ?
+                and s.season_id = ?
+                and rs.season_id = ?
+                group by u.id
+                order by result", [$event_id, $this->id, $gender, $season_id, $season_id]);
+        }
+
+        return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result
+                from performance p left join athlete a on p.athlete_id = a.id
+                left join schedule_event s on p.meet_id = s.id
+                left join users u on a.user_id = u.id
+                inner join roster_spot rs on rs.athlete_id = a.id
+                where p.event_id = ? and p.team_id = ?
+                and u.gender = ?
+                and s.season_id = ?
+                and rs.season_id = ?
+                and s.xc_course_id = ?
+                group by u.id
+                order by result", [$event_id, $this->id, $gender, $season_id, $season_id, $course_id]);
+    }
+
     public function teamBests($event_id, $gender, $include_relays = False) {
         $event = \App\Event::find($event_id);
         $season_id = session('season');
+
         if ($event->open) {
             if ($include_relays) {
                 return DB::select("select concat(min(p.result), ' - ', u.first_name, ' ', u.last_name) as result

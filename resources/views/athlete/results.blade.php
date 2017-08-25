@@ -85,7 +85,7 @@
 	<div class="half-page">
 		<div class="half-header-container">
 			<div class="header-center">
-				<h2 class="top-header">Meet Results</h2>
+				<h3 class="top-header">Meet Results</h3>
 			</div>
 		</div>
 

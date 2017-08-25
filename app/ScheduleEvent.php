@@ -34,4 +34,20 @@ class ScheduleEvent extends Model
 			and u.gender = ?
 			order by r.id", [$this->id, $event, $gender]);
     }
+
+    public function resultsXC($event, $gender) {
+    	return DB::select("select p.id, p.result, concat(u.first_name, ' ', u.last_name) as name
+			from performance p left join athlete a on p.athlete_id = a.id
+			left join users u on a.user_id = u.id
+			where meet_id = ?
+			and p.event_id = ?
+			and p.relay_leg is null
+			and u.gender = ?", [$this->id, $event, $gender]);
+    }
+
+    public function courseName() {
+    	return DB::select("select x.name from schedule_event m
+			left join xc_course x on m.xc_course_id = x.id
+			where m.id = ?", [$this->id])[0]->name;
+    }
 }

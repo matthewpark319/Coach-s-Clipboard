@@ -17,20 +17,17 @@
         <div class="half-content">
             <div class="list-container-scroll">
                 <table class="table table-bordered table-hover">
-                    <col style="width:33%">
-                    <col style="width:33%">
-                    <col style="width:34%">
+                    <col style="width:50%">
+                    <col style="width:50%">
                     <thead>
                         <th>Name</th>
                         <th>Level</th>
-                        <th>Events</th>
                     </thead>
                     <tbody>
                         @foreach ($team->roster() as $teammate)
                             <tr>
                                 <td><a href="{{ route('athlete-view-athlete', ['athlete' => $teammate->id]) }}">{{ $teammate->name }}</a></td>
                                 <td>{{ $teammate->level }}</td>
-                                <td>{{ $teammate->events }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -43,7 +43,7 @@
                             </tbody>
                         </table>
                     @else
-                        @php $returning = $team->returningAthletes(session('ns_id'), $team->currentSeason()->id) @endphp
+                        @php $returning = $team->returningAthletes(session('ns_year'), session('ns_name'), $team->currentSeason()->id) @endphp
                         @if (count($returning) > 0)
                             <table class="table table-bordered table-hover">
                                 <col style="width:33%">
@@ -67,7 +67,7 @@
                                 </tbody>
                             </table>
                         @else
-                            <h4>No returning athletes for {{ \App\Season::find(session('ns_id'))->year }}</h4>
+                            <h4>No returning athletes for {{ session('ns_year') }}</h4>
                         @endif
                     @endif
                     </div>

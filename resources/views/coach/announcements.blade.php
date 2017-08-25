@@ -48,28 +48,4 @@
 	</div>
 </div>
 
-<script>
-function removeAnnouncement(id) {
-    if (confirm("Delete announcement?")) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/coach/delete-announcement");   
-
-        var id = document.createElement("input");
-        id.setAttribute("type", "hidden");
-        id.setAttribute("name", "id");
-        id.setAttribute("value", id);
-        form.appendChild(id);
-            
-        var csrf_field = document.createElement("input");
-        csrf_field.setAttribute("type", "hidden");
-        csrf_field.setAttribute("name", "_token");
-        csrf_field.setAttribute("value", $("input[name=_token]").val());
-        form.append(csrf_field);
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
 @endsection

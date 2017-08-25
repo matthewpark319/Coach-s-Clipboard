@@ -7,7 +7,15 @@ use Illuminate\Support\Facades\DB;
 
 class Event extends Model
 {
-    //
+    /*
+    *   types
+    *   0 = sprint
+    *   1 = distance
+    *   2 = field
+    *   3 = relay
+    *   4 = XC
+    */
+
     protected $table = 'event';
 
     public static function getIndividualEvents() {
@@ -25,5 +33,13 @@ class Event extends Model
             parent::find($legs->event_second_leg),
             parent::find($legs->event_third_leg),
             parent::find($legs->event_fourth_leg));
+    }
+
+    public static function getTrackEvents() {
+        return DB::select("select * from event where type != 4");
+    }
+
+    public static function getXCEvents() {
+        return DB::select("select * from event where type = 4");
     }
 }

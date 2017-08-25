@@ -112,6 +112,7 @@
  								@else 
  									<a class="float-right" href="{{ route('manage-team', ['set_current' => $season->id]) }}">Set as current</a>
 								@endif
+								
 							</li>
 						@endforeach
 					</ul>

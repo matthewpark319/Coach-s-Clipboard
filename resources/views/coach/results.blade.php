@@ -29,7 +29,7 @@
 					<select id="event" name="event" class="form-control" onchange="showTeamBests()">
 						<option value="">-- Select Event --</option>
 
-                        @foreach (\App\Event::all() as $e)
+                        @foreach (\App\Event::getTrackEvents() as $e)
                             <option id="{{ $e->id }}" value="{{ $e->id }}" class="{{ $e->type }}">{{ $e->name }}</option> 
                         @endforeach
 					</select>
@@ -112,8 +112,6 @@ function showTeamBests() {
 		@else
 			window.location.href = "/coach/results/team-bests/" + $("#event option:selected").val() + "/";
 		@endif
-	} else {
-		window.location.href = "{{ route('coach-results') }}"; 
 	}
 }
 

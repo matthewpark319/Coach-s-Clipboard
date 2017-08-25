@@ -110,7 +110,7 @@ class PreLoginController extends Controller
         $team = new Team;
         $team->name = $request->name;
         $team->school = $request->school;
-        $team->password = bcrypt($request->password);
+        $team->password = $request->password;
         $team->save();
 
         // register first season for team
@@ -144,7 +144,7 @@ class PreLoginController extends Controller
         $user_id = $this->register($user_data);
 
         if ($request->session()->get('coach_or_athlete')) {
-            if (!password_verify($request->password, $team->password)) return view('register/join-team', ['password_incorrect' => True]);
+            if (strcmp($request->password, $team->password) != 0) return view('register/join-team', ['password_incorrect' => True]);
             $coach = new Coach;
             $coach->title = $request->session()->get('coach-title');
             $coach->user_id = $user_id;

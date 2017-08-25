@@ -59,14 +59,16 @@
 					</div>
 				</div>
 
-				<div class="form-group">
-					<div class="col-md-2">
-						<label class="float-right" for="events">Events</label>
+				@if (!session('xc'))
+					<div class="form-group">
+						<div class="col-md-2">
+							<label class="float-right" for="events">Events</label>
+						</div>
+						<div class="col-md-8">
+							<input id="events" type="text" class="form-control" name="events" required>
+						</div>
 					</div>
-					<div class="col-md-8">
-						<input id="events" type="text" class="form-control" name="events" required>
-					</div>
-				</div>
+				@endif
 
 				<div class="form-group">
 					<div class="col-md-2">
@@ -87,7 +89,7 @@
 				</div>
 			</form>
 
-			<div class="container">
+			<div class="error-container">
 			@if (count($errors) > 0)
 				@foreach ($errors->all() as $e)
 					<li>{{ $e }}</li>

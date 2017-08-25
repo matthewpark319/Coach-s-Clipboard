@@ -12,7 +12,6 @@
 		<div class="form-container">
             <form method="post" id="form" url="{{ $meet->id }}">
                 {{ csrf_field() }}
-                <input name="team_id" type="hidden" value="{{ $team->id }}">
                 <input name="event_type" type="hidden" value="" id="event_type">
                 <div class="form-inline event">
                     <div class="form-group">
@@ -65,7 +64,7 @@
                 </div>
             </form>
 
-            <div class="container">
+            <div class="error-container">
             @if (count($errors) > 0)
                 @foreach ($errors->all() as $e)
                     <li>{{ $e }}</li>

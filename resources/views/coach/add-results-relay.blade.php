@@ -152,7 +152,7 @@
                 </div>
 
             </form>
-            <div class="container">
+            <div class="error-container">
             @if (count($errors) > 0)
                 @foreach ($errors->all() as $e)
                     <li>{{ $e }}</li>

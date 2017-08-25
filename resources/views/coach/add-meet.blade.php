@@ -18,7 +18,7 @@
 					</div>
 					
 	 				<div class="col-md-8">
-						<input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+						<input id="name" type="text" class="form-control" name="meet_name" value="{{ old('name') }}" required autofocus>
 					</div>
 				</div>
 
@@ -56,14 +56,14 @@
 
 			</form>
 
-			<div class="container">
-			@if (count($errors) > 0)
-				@foreach ($errors->all() as $e)
-					<li>{{ $e }}</li>
-				@endforeach
-			@elseif ($successful)
-				<h4>Meet Saved</h4>
-			@endif
+			<div class="error-container">
+				@if (count($errors) > 0)
+					@foreach ($errors->all() as $e)
+						<li>{{ $e }}</li>
+					@endforeach
+				@elseif ($successful)
+					<h4>Meet Saved</h4>
+				@endif
 			</div>
 		</div>
 

@@ -30,42 +30,49 @@
                     <th>Delete</th>
                 </thead>
                 <tbody>
-                    @foreach ($team->schedule() as $entry)
-                        @if ($entry->importance == 0)
+                    @foreach ($team->schedule() as $meet)
+                        @if ($meet->importance == 0)
                             <tr class="success">
-                                <td>{{ $entry->name }}</td>
-                                <td>{{ $entry->date_formatted }}</td>
-                                <td>{{ $entry->location }}</td>
+                                <td>{{ $meet->name }}</td>
+                                <td>{{ $meet->date_formatted }}</td>
+                                <td>{{ $meet->location }}</td>
                                 <td>Low</td>                        
-                        @elseif ($entry->importance == 1)
+                        @elseif ($meet->importance == 1)
                             <tr class="warning">
-                                <td>{{ $entry->name }}</td>
-                                <td>{{ $entry->date_formatted }}</td>
-                                <td>{{ $entry->location }}</td>
+                                <td>{{ $meet->name }}</td>
+                                <td>{{ $meet->date_formatted }}</td>
+                                <td>{{ $meet->location }}</td>
                                 <td>Medium</td>
                         @else 
                             <tr class="danger">
-                                <td>{{ $entry->name }}</td>
-                                <td>{{ $entry->date_formatted }}</td>
-                                <td>{{ $entry->location }}</td>
+                                <td>{{ $meet->name }}</td>
+                                <td>{{ $meet->date_formatted }}</td>
+                                <td>{{ $meet->location }}</td>
                                 <td>High</td>                            
                         @endif
                             <td>
                                 <div class="squaredFour">
-                                    @if ($entry->complete)
-                                        <input class="completed" type="checkbox" id="completed-{{ $entry->id }}" onchange="uncompleteEvent({{ $entry->id }})" checked>
+                                    @if ($meet->complete)
+                                        <input class="completed" type="checkbox" id="completed-{{ $meet->id }}" onchange="uncompleteEvent({{ $meet->id }})" checked>
                                     @else 
-                                        <input class="completed" type="checkbox" id="completed-{{ $entry->id }}" onchange="completeEvent({{ $entry->id }})">
+                                        <input class="completed" type="checkbox" id="completed-{{ $meet->id }}" onchange="completeEvent({{ $meet->id }})">
                                     @endif
-                                    <label for="completed-{{ $entry->id }}"></label>
+                                    <label for="completed-{{ $meet->id }}"></label>
                                 </div>
                             </td>
-                            @if ($entry->complete)
-                                <td><a href="{{ route('add-results-individual', ['meet' => $entry->id]) }}">Add Results</a></td>
+                            @if ($meet->complete)
+                                @if (session('xc'))
+                                    <td><a href="{{ route('add-results-xc', ['meet' => $meet->id]) }}">Add Results</a></td>
+                                @else
+                                    <td><a href="{{ route('add-results-individual', ['meet' => $meet->id]) }}">Add Results</a></td>
+                                @endif
                                 <td>-</td>
                             @else
                                 <td>Not Complete</td>
-                                <td><a href="#" id='remove' onclick='removeEntry({{ $entry->id }})'><img class="minus" src="{{ asset('/images/red-minus-hi.png') }}"></a></td>
+                                <td>
+                                    <a href="{{ route('delete-meet', ['meet' => $meet->id]) }}" id='remove' onclick="confirm('Delete meet: {{ $meet->name }}?')">
+                                        <img class="minus" src="{{ asset('/images/red-minus-hi.png') }}"></a>
+                                </td>
                             @endif
                         </tr>
                     @endforeach
@@ -77,103 +84,27 @@
 
     @if (session('season') == $team->currentSeason()->id)
 	<div class="footer">
-		<a class="add-button" href="{{ route('add-schedule-event') }}">
-			<button class="btn btn-default btn-bottom-right">Add New Event</button>
-		</a>
+        @if (session('xc'))
+            <a class="add-button" href="{{ route('add-meet-xc') }}">
+        @else
+            <a class="add-button" href="{{ route('add-meet') }}">
+        @endif
+            <button class="btn btn-default btn-bottom-right">Add New Meet</button>
+        </a>
 	</div>
     @endif
 </div>
 
-{{ csrf_field() }}
 <script>
-function uncompleteEvent(entry_id) {
-	console.log('hello2');
+function uncompleteEvent(meet_id) {
     if (confirm("Uncompleting this event will delete all of its results. Continue?")) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-
-        var complete = document.createElement("input");
-        complete.setAttribute("type", "hidden");
-        complete.setAttribute("name", "complete");
-        complete.setAttribute("value", 0);
-        form.appendChild(complete);
-
-        var id = document.createElement("input");
-        id.setAttribute("type", "hidden");
-        id.setAttribute("name", "entry_id");
-        id.setAttribute("value", entry_id);
-        form.appendChild(id);
-
-        var csrf_field = document.createElement("input");
-        csrf_field.setAttribute("type", "hidden");
-        csrf_field.setAttribute("name", "_token");
-        csrf_field.setAttribute("value", $("input[name=_token]").val());
-        form.appendChild(csrf_field);
-
-        var team_id = document.createElement("input");
-        team_id.setAttribute("type", "hidden");
-        team_id.setAttribute("name", "team_id");
-        team_id.setAttribute("value", {{ $team->id }});
-        form.appendChild(team_id);
-
-        document.body.appendChild(form);
-        form.submit();
+        window.location.href = '/coach/schedule/uncomplete-meet/' + meet_id;
     }
 }
 
-function completeEvent(entry_id) {
-	console.log('hello');
-    var form = document.createElement("form");
-    form.setAttribute("method", "post");
-
-    var complete = document.createElement("input");
-    complete.setAttribute("type", "hidden");
-    complete.setAttribute("name", "complete");
-    complete.setAttribute("value", 1);
-    form.appendChild(complete);
-
-    var id = document.createElement("input");
-    id.setAttribute("type", "hidden");
-    id.setAttribute("name", "entry_id");
-    id.setAttribute("value", entry_id);
-    form.appendChild(id);
-
-    var csrf_field = document.createElement("input");
-    csrf_field.setAttribute("type", "hidden");
-    csrf_field.setAttribute("name", "_token");
-    csrf_field.setAttribute("value", $("input[name=_token]").val());
-    form.appendChild(csrf_field);
-        
-    document.body.appendChild(form);
-    form.submit();
+function completeEvent(meet_id) {
+	window.location.href = '/coach/schedule/complete-meet/' + meet_id;
 }
 
-function removeEntry(entry_id) {
-    if (confirm("Delete meet entry?")) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-
-        var del = document.createElement("input");
-        del.setAttribute("type", "hidden");
-        del.setAttribute("name", "delete");
-        del.setAttribute("value", 1);
-        form.appendChild(del);        
-
-        var id = document.createElement("input");
-        id.setAttribute("type", "hidden");
-        id.setAttribute("name", "entry_id");
-        id.setAttribute("value", entry_id);
-        form.appendChild(id);
-
-        var csrf_field = document.createElement("input");
-        csrf_field.setAttribute("type", "hidden");
-        csrf_field.setAttribute("name", "_token");
-        csrf_field.setAttribute("value", $("input[name=_token]").val());
-        form.appendChild(csrf_field);
-            
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
 </script>
 @endsection
